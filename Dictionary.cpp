@@ -1,26 +1,30 @@
 #include "Dictionary.h"
 #include "Node.h"
 #include <string>
+#include <vector>
 
 using std::string;
+using std::vector;
+using std::pair;
 
 class Dictionary {
 public :
-	void insert(string word, long symbol);
+	Node* insert(string word, long symbol);
+
+	void insertList(vector<pair<string,long>> v);
 
 	bool remove(long symbol);
 
 	bool isPresent(long symbol);
 
-	//Avance si c'est possible le currentNode sur le nouveau symbole et return "". Sinon remet le currentNode à la racine et retourne la valeur du currentNode juste avant.
 	string read(long symbol);
 
-	//Retourne le mot correspondant au symbole du noeud courant
-	string getValueCurrentNode();
+	string getWordCurrentNode();
 
 	Dictionary();
 
 	~Dictionary();
+
 private :
 	Node * racine;
 	Node * currentNode;
@@ -32,16 +36,48 @@ Dictionary::Dictionary()
 	currentNode = racine;
 }
 
-void Dictionary::insert(string word, long symbol) {
-	if (!currentNode->isPresent(symbol)) currentNode->addNode(word,symbol);
+//Return the word of the currentNode
+string Dictionary::getWordCurrentNode() {
+	return currentNode->getWord();
 }
 
+//Insert in the dictionary the symbol linked to a word as a children of the currentNode. You don't need to check if it's already in the children of the currentNode
+Node* Dictionary::insert(string word, long symbol) {
+	return currentNode->addNode(word,symbol);
+}
+
+//Creation from the racine of the tree of the list of symbol/pair you sent
+void Dictionary::insertList(vector<pair<string, long>> v) {
+
+	Node* currentNodeCreation = racine;
+	for (vector<pair<string, long>>::iterator it = v.begin(); it != v.end(); ++it)
+	{
+		currentNodeCreation = insert((*it).first, (*it).second);
+	}
+}
+
+//Remove if it is possible the children of the currentNode with the symbol symbol. Return true if the remove was successful, otherwhise false
 bool Dictionary::remove(long symbol) {
 	return currentNode->removeNode(symbol);
 }
 
+//Return true if the children of the currentNode with the symbol symbol exist. Otherwhise, false
 bool Dictionary::isPresent(long symbol) {
 	return currentNode->isPresent(symbol);
+}
+
+//Update currentNode if it is posssible and return "". Otherwhise, reset currentNode (currentNode = racine) and return the previous currentNode word value
+string Dictionary::read(long symbol) {
+	Node* n = currentNode->getChildren(symbol);
+	if (n != NULL) {
+		currentNode = n;
+		return "";
+	}
+	else {
+		string word = currentNode->getWord();
+		currentNode = racine;
+		return word;
+	}
 }
 
 Dictionary::~Dictionary()
