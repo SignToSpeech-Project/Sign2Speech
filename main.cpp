@@ -1,6 +1,6 @@
 ﻿#include <windows.h>
 #include <iostream>
-
+/*
 #include "pxcsensemanager.h"
 #include "pxcmetadata.h"
 #include "service/pxcsessionservice.h"
@@ -44,11 +44,80 @@ BOOL CtrlHandler( DWORD fdwCtrlType )
     default: 
       return FALSE; 
   } 
-} 
+} */
 
-void main(int argc, const char* argv[])
+#include "Dictionary.h"
+#include <vector>
+
+using std::string;
+using std::vector;
+using std::pair;
+using std::cout;
+using std::cin;
+
+int main(int argc, const char* argv[])
 {
-	Definitions::appName = argv[0];
+
+	Dictionary d;
+
+	//Première série pour faire un mot 
+	pair<string, long> p1("jambon1", 1);
+	pair<string, long> p2("jambon4", 4);
+	pair<string, long> p3("jambon3", 3);
+	pair<string, long> p4("jambon2", 2);
+
+	//Deuxième série pour faire un mot
+	pair<string, int> p5("jambon1", 1); //Je vérifie que ca ne duplique pas le jambon1 du premier vecteur
+	pair<string, long> p6("saucisson1", 4); //p6 symbole = p2 symbole = 4. Cela va overwrite le "mot" lié au symbole 8 qui va devenir "saucisson1" à la place de jambon4
+	pair<string, long> p7("saucisson2", 7);
+
+	//Troisème mot
+	pair<string, long> p8("autruche", 8);
+
+	//Création des structures à envoyer au dictionnaire (un vecteur par série de mots/signes)
+	vector<pair<string, long>> v = { p1,p2,p3,p4};
+
+	vector<pair<string, long>> v2 = { p5,p6,p7};
+
+	vector<pair<string, long>> v3 = { p8 };
+	
+	//On les insèrent au dico
+	d.insertList(v);
+	d.insertList(v2);
+	d.insertList(v3);
+
+	//Lire un symbole. 
+	string temp = d.read(1); //Renvoie "" car 1 n'est pas un symbole final
+	cout << "la valeur premiere lecture est : " << temp <<"\n";
+	//Si le timer expire, alors on affiche le mot correspondant au dernier mot lu, soit le mot lié à symbol 1
+	temp = d.refreshDictionary();
+	cout << "la valeur deuxième lecture est : " << temp << "\n";
+
+	temp = d.read(1); //Renvoie "" car 1 n'est pas un symbole final
+	cout << "la valeur troisième lecture est : " << temp << "\n";
+	temp = d.read(1); //Renvoie la valeur du symbol 1 car 1 n'as pas de fils avec le symbol 1, c'est donc un symbol 1
+	cout << "la valeur quatrième lecture est : " << temp << "\n";
+	temp = d.read(1);
+	temp = d.read(4);
+	temp = d.read(7);
+	temp = d.refreshDictionary();
+	cout << "la valeur cinquième lecture est : " << temp << "\n";
+
+	temp = d.read(1);
+	cout << "la valeur sixieme lecture est : " << temp << "\n";
+	temp = d.read(4);
+	cout << "la valeur septième lecture est : " << temp << "\n";
+	temp = d.read(1);
+	cout << "la valeur huitième lecture est : " << temp << "\n";
+
+	temp = d.refreshDictionary();
+	cout << "la valeur neuvième lecture est : " << temp << "\n";
+
+	while (true);
+
+	return 0;
+
+	/*Definitions::appName = argv[0];
 
 	SetConsoleCtrlHandler( (PHANDLER_ROUTINE) CtrlHandler, TRUE );
 	if(argc < 2)
@@ -263,6 +332,6 @@ void releaseAll()
 	{
 		g_session->Release();
 		g_session = NULL;
-	}
+	}*/
 }
 
