@@ -1,8 +1,21 @@
 #pragma once
+#include <vector>
+#include <string>
+
+using std::vector;
+using std::string;
 
 //Key : symbol. Value : word
 class Node
 {
+
+
+private:
+
+	vector <Node*> childrens;
+	long symbol;
+	string word;
+
 public:
 
 	long getSymbol();

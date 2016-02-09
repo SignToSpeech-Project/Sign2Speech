@@ -1,39 +1,12 @@
 #include "Dictionary.h"
 #include "Node.h"
-#include <string>
-#include <vector>
 
-using std::string;
-using std::vector;
-using std::pair;
-
-class Dictionary {
-public :
-	Node* insert(string word, long symbol);
-
-	void insertList(vector<pair<string,long>> v);
-
-	bool remove(long symbol);
-
-	bool isPresent(long symbol);
-
-	string read(long symbol);
-
-	string getWordCurrentNode();
-
-	Dictionary();
-
-	~Dictionary();
-
-private :
-	Node * racine;
-	Node * currentNode;
-};
 
 Dictionary::Dictionary()
 {
-	racine = new Node("", 0);
+	racine = new Node("racine", 0);
 	currentNode = racine;
+	currentNodeCreation = racine;
 }
 
 //Return the word of the currentNode
@@ -43,17 +16,16 @@ string Dictionary::getWordCurrentNode() {
 
 //Insert in the dictionary the symbol linked to a word as a children of the currentNode. You don't need to check if it's already in the children of the currentNode
 Node* Dictionary::insert(string word, long symbol) {
-	return currentNode->addNode(word,symbol);
+	return currentNodeCreation->addNode(word,symbol);
 }
 
 //Creation from the racine of the tree of the list of symbol/pair you sent
 void Dictionary::insertList(vector<pair<string, long>> v) {
-
-	Node* currentNodeCreation = racine;
 	for (vector<pair<string, long>>::iterator it = v.begin(); it != v.end(); ++it)
 	{
 		currentNodeCreation = insert((*it).first, (*it).second);
 	}
+	currentNodeCreation = racine;
 }
 
 //Remove if it is possible the children of the currentNode with the symbol symbol. Return true if the remove was successful, otherwhise false
@@ -71,13 +43,23 @@ string Dictionary::read(long symbol) {
 	Node* n = currentNode->getChildren(symbol);
 	if (n != NULL) {
 		currentNode = n;
-		return "";
+		return "retourne vide";
 	}
 	else {
 		string word = currentNode->getWord();
 		currentNode = racine;
+		n = currentNode->getChildren(symbol); //To not lost the current symbol
+		if (n != NULL) currentNode = n;
 		return word;
 	}
+}
+
+
+//Put the currentNode on the racine and return previous currentNode word value.
+string Dictionary::refreshDictionary() {
+	string word = currentNode->getWord();
+	currentNode = racine;
+	return word;
 }
 
 Dictionary::~Dictionary()

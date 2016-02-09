@@ -1,6 +1,21 @@
 #pragma once
+#include "Node.h"
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
+using std::pair;
+
 class Dictionary
 {
+
+private:
+
+	Node * racine;
+	Node * currentNode;
+	Node* currentNodeCreation;
+
 public:
 
 	//Insert in the dictionary the symbol linked to a word as a children of the currentNode. You don't need to check if it's already in the children of the currentNode
@@ -20,6 +35,9 @@ public:
 
 	//Return the word of the currentNode
 	string getWordCurrentNode();
+
+	//Put the currentNode on the racine and return previous currentNode word value.
+	string refreshDictionary();
 
 	Dictionary();
 	~Dictionary();

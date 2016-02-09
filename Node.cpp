@@ -1,36 +1,9 @@
 #include "Node.h"
-#include <vector>
-#include <string>
-
-using std::vector;
-using std::string;
 
 //Key : symbol. Value : word
-class Node {
 
-private:
-	vector <Node*> childrens;
-	long symbol;
-	string word;
-
-public:
-	Node* addNode(string w, long s);
-
-	bool removeNode(long s);
-
-	bool isPresent(long s);
-
-	Node* getChildren(long s);
-
-	Node(string w, long s);
-	~Node();
-
-	long getSymbol(); 
-	string getWord();
-};
-
-long Node::getSymbol() { return symbol; }
 string Node::getWord() { return word; }
+long Node::getSymbol() { return symbol; }
 
 //Add to the Node childrens list the Node n
 //If there is already a symbol s in the childre list, it just update his linked word
@@ -50,7 +23,14 @@ Node* Node::addNode(string w, long s) {
 
 //Remove the first children with the symbol s from Node childrens list. Return true if the remove was sucessfull, otherwise false
 bool Node::removeNode(long s) { //True if removed, else false
-
+	for (vector<Node *>::iterator it = childrens.begin(); it != childrens.end(); ++it)
+	{
+		if (((*it)->symbol == s)) {
+			childrens.erase(it);
+			return true;
+		}
+	}
+	return false;
 }
 
 //Return true if symbol s is present at least one time in the Node childrens list. Else return false
