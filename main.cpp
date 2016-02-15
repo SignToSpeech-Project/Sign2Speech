@@ -47,6 +47,7 @@ BOOL CtrlHandler( DWORD fdwCtrlType )
 } */
 
 #include "Dictionary.h"
+#include "Parser.h"
 #include <vector>
 
 using std::string;
@@ -57,8 +58,29 @@ using std::cin;
 
 int main(int argc, const char* argv[])
 {
-
 	Dictionary d;
+	Parser p("examples/example.json");
+
+	// vector of vector used to store all the pairs
+	vector< vector< pair<string, long> > > res;
+
+	// parse the json file
+	res = p.ReadJsonFile();
+
+	// insert all the vectors of pairs in the dictionary
+	for (vector<vector<pair<string, long>>>::iterator it = res.begin(); it != res.end(); ++it){
+		d.insertList((*it));
+	}
+
+	//getsymbol
+	string mot = d.read(1);
+	mot = d.read(2);
+	mot = d.read(3);
+	mot = d.read(1);
+	cout << mot << endl;
+
+	while (true);
+	/*Dictionary d;
 
 	//Première série pour faire un mot 
 	pair<string, long> p1("jambon1", 1);
@@ -115,7 +137,7 @@ int main(int argc, const char* argv[])
 
 	while (true);
 
-	return 0;
+	return 0;*/
 
 	/*Definitions::appName = argv[0];
 

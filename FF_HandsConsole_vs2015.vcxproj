@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -22,6 +22,7 @@
     <ProjectName>FF_HandsConsole</ProjectName>
     <RootNamespace>FF_HandsConsole</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{1115AC67-C525-4995-BDEF-2D19B214F34A}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -90,8 +91,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <ProgramDataBaseFileName></ProgramDataBaseFileName>
-      <ForcedIncludeFiles></ForcedIncludeFiles>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(ProjectName)_d.exe</OutputFile>
@@ -102,7 +105,8 @@
     <Link>
       <AdditionalDependencies>libpxc_d.lib;libpxcutils_d.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName)_d.exe</OutputFile>
-      <ModuleDefinitionFile></ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <AdditionalLibraryDirectories>../common/lib/$(PlatformName)/$(PlatformToolset);../../lib/$(PlatformName);$(RSSDK_DIR)/lib/$(PlatformName);$(RSSDK_DIR)/sample/common/lib/$(PlatformName)/$(PlatformToolset);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -112,7 +116,8 @@
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command></Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,8 +129,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <ProgramDataBaseFileName></ProgramDataBaseFileName>
-      <ForcedIncludeFiles></ForcedIncludeFiles>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(ProjectName)_d.exe</OutputFile>
@@ -136,7 +143,8 @@
     <Link>
       <AdditionalDependencies>libpxc_d.lib;libpxcutils_d.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName)_d.exe</OutputFile>
-      <ModuleDefinitionFile></ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <AdditionalLibraryDirectories>../common/lib/$(PlatformName)/$(PlatformToolset);../../lib/$(PlatformName);$(RSSDK_DIR)/lib/$(PlatformName);$(RSSDK_DIR)/sample/common/lib/$(PlatformName)/$(PlatformToolset);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
@@ -146,7 +154,8 @@
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command></Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,8 +166,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <ProgramDataBaseFileName></ProgramDataBaseFileName>
-      <ForcedIncludeFiles></ForcedIncludeFiles>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
@@ -170,7 +181,8 @@
       <AdditionalDependencies>libpxc.lib;libpxcutils.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../common/lib/$(PlatformName)/$(PlatformToolset);../../lib/$(PlatformName);$(RSSDK_DIR)/lib/$(PlatformName);$(RSSDK_DIR)/sample/common/lib/$(PlatformName)/$(PlatformToolset);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <ModuleDefinitionFile></ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>
@@ -178,7 +190,8 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command></Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -189,8 +202,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <ProgramDataBaseFileName></ProgramDataBaseFileName>
-      <ForcedIncludeFiles></ForcedIncludeFiles>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
@@ -202,7 +217,8 @@
       <AdditionalDependencies>libpxc.lib;libpxcutils.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../common/lib/$(PlatformName)/$(PlatformToolset);../../lib/$(PlatformName);$(RSSDK_DIR)/lib/$(PlatformName);$(RSSDK_DIR)/sample/common/lib/$(PlatformName)/$(PlatformToolset);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <ModuleDefinitionFile></ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>
@@ -210,18 +226,58 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command></Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp"  />
+    <ClCompile Include="Dictionary.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h"  />
-    <ClInclude Include="Definitions.h"  />
+    <ClInclude Include="Dictionary.h" />
+    <ClInclude Include="include\rapidjson\allocators.h" />
+    <ClInclude Include="include\rapidjson\document.h" />
+    <ClInclude Include="include\rapidjson\encodedstream.h" />
+    <ClInclude Include="include\rapidjson\encodings.h" />
+    <ClInclude Include="include\rapidjson\error\en.h" />
+    <ClInclude Include="include\rapidjson\error\error.h" />
+    <ClInclude Include="include\rapidjson\filereadstream.h" />
+    <ClInclude Include="include\rapidjson\filewritestream.h" />
+    <ClInclude Include="include\rapidjson\fwd.h" />
+    <ClInclude Include="include\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="include\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="include\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="include\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="include\rapidjson\internal\itoa.h" />
+    <ClInclude Include="include\rapidjson\internal\meta.h" />
+    <ClInclude Include="include\rapidjson\internal\pow10.h" />
+    <ClInclude Include="include\rapidjson\internal\regex.h" />
+    <ClInclude Include="include\rapidjson\internal\stack.h" />
+    <ClInclude Include="include\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="include\rapidjson\internal\strtod.h" />
+    <ClInclude Include="include\rapidjson\internal\swap.h" />
+    <ClInclude Include="include\rapidjson\memorybuffer.h" />
+    <ClInclude Include="include\rapidjson\memorystream.h" />
+    <ClInclude Include="include\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="include\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="include\rapidjson\pointer.h" />
+    <ClInclude Include="include\rapidjson\prettywriter.h" />
+    <ClInclude Include="include\rapidjson\rapidjson.h" />
+    <ClInclude Include="include\rapidjson\reader.h" />
+    <ClInclude Include="include\rapidjson\schema.h" />
+    <ClInclude Include="include\rapidjson\stream.h" />
+    <ClInclude Include="include\rapidjson\stringbuffer.h" />
+    <ClInclude Include="include\rapidjson\writer.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Definitions.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="FF_HandsConsole.rc"  />
+    <ResourceCompile Include="FF_HandsConsole.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
