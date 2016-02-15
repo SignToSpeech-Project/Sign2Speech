@@ -3,29 +3,15 @@
 #include "include\rapidjson\filereadstream.h"
 #include "include\rapidjson\filewritestream.h"
 #include "include\rapidjson\stringbuffer.h"
-//#include "parser.h"
+#include "Parser.h"
 
-#include <cstdio>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <utility> // std::pair
-
-using std::cout;
-using namespace rapidjson;
-using namespace std;	
-
-int getNbWords(rapidjson::Document d){
-	int nb = 0 ;
-	for (Value::ConstMemberIterator itr = d.MemberBegin(); itr != d.MemberEnd(); ++itr){
-		nb++;
-	}
-	return nb;
+Parser::Parser(char * str) {
+	this->path = str;
 }
 
-int main(){
+vector< vector< pair<string, long> > > Parser::ReadJsonFile (){
 
-	FILE* src = fopen("example.json", "rb");
+	FILE* src = fopen(path, "rb");
 	Document d, docTmp;
 	char readBuffer[65536];
 	StringBuffer buffer;
@@ -48,9 +34,6 @@ int main(){
 
     // print the output
 	cout << buffer.GetString() << endl;
-
-	Value outDoc(d, d.GetAllocator());
-	outDoc.CopyFrom(d, outDoc.GetAllocator());
 
 	// count total number of words
 	for (Value::ConstMemberIterator itr = d.MemberBegin(); itr != d.MemberEnd(); ++itr){
@@ -99,5 +82,6 @@ int main(){
 		allVectors.push_back(vect);
 	}
 
-	return 0;
+	return allVectors;
 }
+
