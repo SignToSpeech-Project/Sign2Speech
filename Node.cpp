@@ -55,6 +55,14 @@ Node* Node::getChildren(long s) {
 	return NULL;
 }
 
+vector <Node*> Node::getChildrens() {
+	return childrens;
+}
+
+bool Node::hasChildrens() {
+	return childrens.size() != 0;
+}
+
 //Constructor of Node. w is the word linked to the symbol s
 Node::Node(string w, long s)
 {

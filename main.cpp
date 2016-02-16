@@ -79,6 +79,8 @@ int main(int argc, const char* argv[])
 	mot = d.read(1);
 	cout << mot << endl;
 
+	vector<vector<pair<string, long>>> v = d.createVectorDictionary(); //Creation vecteur de vecteur de paires à partir du dictionnaire
+
 	while (true);
 	/*Dictionary d;
 

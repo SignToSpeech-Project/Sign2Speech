@@ -62,6 +62,40 @@ string Dictionary::refreshDictionary() {
 	return word;
 }
 
+//Return the vector of vector of pairs of the current Dictionnary
+vector<vector<pair<string, long>>> Dictionary::createVectorDictionary() {
+	
+	vector<vector<pair<string, long>>> v;
+
+	vector<pair<string, long>> v2;
+	vector<Node *>::iterator it;
+	vector<Node *> vtemp = racine->getChildrens();
+	for ( it = vtemp.begin(); it != vtemp.end(); ++it) {
+		vectorDictionary(&v, v2, (*it)); 
+	}
+	return v;
+}
+
+//Private function used for createVectorDictionary(). Used for recursivity
+void Dictionary::vectorDictionary(vector<vector<pair<string, long>>>* v, vector<pair<string, long>> v2, Node* n) {
+	if (!(n->hasChildrens())) {
+		//ajouter à v2 les info du n actuel et les push back dans v
+		pair<string, long> p(n->getWord(), n->getSymbol());
+		v2.push_back(p);
+		v->push_back(v2);
+	}
+	else {
+		vector<Node *> vtemp = n->getChildrens();
+		for (vector<Node *>::iterator it = vtemp.begin(); it != vtemp.end(); ++it)
+		{
+			//ajouter les infos de n au vecteur v2 et appeller vectorDictionnary sur le fils de n
+			pair<string, long> p(n->getWord(), n->getSymbol());
+			v2.push_back(p);
+			vectorDictionary(v, v2, (*it));
+		}
+	}
+}
+
 Dictionary::~Dictionary()
 {
 }

@@ -34,6 +34,10 @@ public:
 	//Return the children of this node with the symbol s. Otherwise return NULL
 	Node* getChildren(long s);
 
+	vector <Node*> getChildrens();
+
+	bool hasChildrens();
+	
 	//Constructor of Node. w is the word linked to the symbol s
 	Node(string w, long s);
 	~Node();
