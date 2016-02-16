@@ -234,12 +234,6 @@
     <ClCompile Include="Dictionary.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
-<<<<<<< HEAD
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Dictionary.h" />
-    <ClInclude Include="Node.h" />
-=======
     <ClCompile Include="Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -279,7 +273,6 @@
     <ClInclude Include="include\rapidjson\writer.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Parser.h" />
->>>>>>> 10e3f67c0e198d1c1e95ba1ab54434fe8aff8d78
     <ClInclude Include="resource.h" />
     <ClInclude Include="Definitions.h" />
   </ItemGroup>
