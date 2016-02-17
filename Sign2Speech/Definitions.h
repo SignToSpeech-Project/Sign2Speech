@@ -84,6 +84,18 @@ namespace Definitions
 		return jointLabel;
 	}
 
+	inline const std::string FingerToString(PXCHandData::FingerType label) {
+		std::string fingerLabel = "";
+		switch (label) {
+		case PXCHandData::FingerType::FINGER_THUMB:					{fingerLabel = "FINGER_THUMB"; break; }
+		case PXCHandData::FingerType::FINGER_INDEX:					{fingerLabel = "FINGER_INDEX"; break; }
+		case PXCHandData::FingerType::FINGER_MIDDLE:				{fingerLabel = "FINGER_MIDDLE"; break; }
+		case PXCHandData::FingerType::FINGER_RING:					{fingerLabel = "FINGER_RING"; break; }
+		case PXCHandData::FingerType::FINGER_PINKY:					{fingerLabel = "FINGER_PINKY"; break;}
+		}
+		return fingerLabel;
+	}
+
 	inline const pxcCHAR* GestureStateToString(PXCHandData::GestureStateType label)
 	{
 		pxcCHAR* gestureState = L"";

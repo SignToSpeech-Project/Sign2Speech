@@ -1,5 +1,10 @@
 #include "stdafx.h"
 
+#define MAXFRAME 21
+
+using namespace std;
+using std::cout;
+
 bool g_live = false; // true - Working in live camera mode, false - sequence mode
 bool g_gestures = false; // Writing gesture data to console ouput
 bool g_alerts = false; // Writing alerts data to console ouput
@@ -15,17 +20,274 @@ PXCHandModule *g_handModule;
 PXCHandData *g_handDataOutput;
 PXCHandConfiguration *g_handConfiguration;
 
+int nbReadFrameRight = 0;
+int nbReadFrameLeft = 0;
+uint32_t rightHandData[MAXFRAME];
+uint32_t leftHandData[MAXFRAME];
+
 void releaseAll();
+
+void analyseGesture(PXCHandData::IHand *hand) {
+	PXCHandData::BodySideType side = hand->QueryBodySide();
+	int *nbReadFrame;
+	uint32_t *handData;
+	string sideStr = "";
+	switch (side) {
+	case PXCHandData::BodySideType::BODY_SIDE_LEFT:
+		nbReadFrame = &nbReadFrameLeft;
+		handData = leftHandData;
+		sideStr = "LEFT";
+		break;
+	case PXCHandData::BodySideType::BODY_SIDE_RIGHT:
+		nbReadFrame = &nbReadFrameRight;
+		handData = rightHandData;
+		sideStr = "RIGHT";
+		break;
+	default:
+		nbReadFrame = &nbReadFrameRight;
+		handData = rightHandData;
+		sideStr = "RIGHT";
+		break;
+	}
+
+	if (*nbReadFrame < MAXFRAME) {
+		// add a new entry into the table
+		PXCHandData::FingerData fingerData;
+		uint32_t finger = 0x0;
+		for (int f = 0; f < 5; f++) {
+			if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
+				if (fingerData.foldedness > 66) {
+					finger |= (0x1 << (2 * f));
+				}
+				else if (fingerData.foldedness <= 66 && fingerData.foldedness > 33) {
+					finger |= (0x1 << (2 * f + 1));
+				}
+			}
+		}
+		handData[*nbReadFrame] = finger;
+		(*nbReadFrame)++;
+	}
+	else {
+		*nbReadFrame = 0;
+
+		// calculate the gesture average
+		uint32_t average = 0x0;
+		uint32_t unite = 0x1;
+		for (int b = 0; b < 10; b++) {
+			int count0 = 0;
+			int count1 = 0;
+			for (int i = 0; i < MAXFRAME; i++) {
+				if (((handData[i] >> b) & 0x1) == 0x0) {
+					count0++;
+				}
+				else {
+					count1++;
+				}
+			}
+			if (count0 < count1) {
+				average |= (unite << b);
+			}
+		}
+
+		for (int b = 9; b >= 0; b--) {
+			std::printf("%d", (average >> b) & 0x1);
+		}
+		std::printf("\n");
+
+		// calculate the Hamming distance
+		uint32_t fist = 0b0;
+		int distance = 0;
+		for (int b = 0; b < 10; b++) {
+			if (((average >> b) & 0x1) != ((fist >> b) & 0x1)) {
+				distance++;
+			}
+		}
+
+		if (distance < 2) {
+			std::printf("\t\t\t %s FIST %d \n", sideStr.c_str(), distance);
+		}
+
+		// calculate the Hamming distance
+		uint32_t victory = 0b010100;
+		distance = 0;
+		for (int b = 0; b < 10; b++) {
+			if (((average >> b) & 0x1) != ((victory >> b) & 0x1)) {
+				distance++;
+			}
+		}
+
+		if (distance < 2) {
+			std::printf("\t\t\t %s VICTORY %d\n", sideStr.c_str(), distance);
+		}
+	}
+
+	//switch (side)
+	//{
+	//case PXCHandData::BodySideType::BODY_SIDE_LEFT:
+	//	if (nbReadFrameLeft < MAXFRAME) {
+	//		// add a new entry into the table
+	//		PXCHandData::FingerData fingerData;
+	//		uint32_t finger = 0x0;
+	//		for (int f = 0; f < 5; f++) {
+	//			if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
+	//				if (fingerData.foldedness > 66) {
+	//					finger |= (0x1 << (2 * f));
+	//				}
+	//				else if (fingerData.foldedness <= 66 && fingerData.foldedness > 33) {
+	//					finger |= (0x1 << (2 * f + 1));
+	//				}
+	//			}
+	//		}
+	//		leftHandData[nbReadFrameLeft] = finger;
+	//		nbReadFrameLeft++;
+	//	}
+	//	else {
+	//		nbReadFrameLeft = 0;
+
+	//		// calculate the gesture average
+	//		uint32_t average = 0x0;
+	//		uint32_t unite = 0x1;
+	//		for (int b = 0; b < 10; b++) {
+	//			int count0 = 0;
+	//			int count1 = 0;
+	//			for (int i = 0; i < MAXFRAME; i++) {
+	//				if (((leftHandData[i] >> b) & 0x1) == 0x0) {
+	//					count0++;
+	//				}
+	//				else {
+	//					count1++;
+	//				}
+	//			}
+	//			if (count0 < count1) {
+	//				average |= (unite << b);
+	//			}
+	//		}
+
+	//		for (int b = 9; b >= 0; b--) {
+	//			std::printf("%d", (average >> b) & 0x1);
+	//		}
+	//		std::printf("\n");
+
+	//		// calculate the Hamming distance
+	//		uint32_t fist = 0b0;
+	//		int distance = 0;
+	//		for (int b = 0; b < 10; b++) {
+	//			if (((average >> b) & 0x1) != ((fist >> b) & 0x1)) {
+	//				distance++;
+	//			}
+	//		}
+
+	//		if (distance < 2) {
+	//			std::printf("\t\t\t LEFT FIST %d \n", distance);
+	//		}
+
+	//		// calculate the Hamming distance
+	//		uint32_t victory = 0b010100;
+	//		distance = 0;
+	//		for (int b = 0; b < 10; b++) {
+	//			if (((average >> b) & 0x1) != ((victory >> b) & 0x1)) {
+	//				distance++;
+	//			}
+	//		}
+
+	//		if (distance < 2) {
+	//			std::printf("\t\t\t LEFT VICTORY %d\n", distance);
+	//		}
+	//	}
+	//	break;
+	//case PXCHandData::BodySideType::BODY_SIDE_RIGHT:
+	//	if (nbReadFrameRight < MAXFRAME) {
+	//		// add a new entry into the table
+	//		PXCHandData::FingerData fingerData;
+	//		uint32_t finger = 0x0;
+	//		for (int f = 0; f < 5; f++) {
+	//			if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
+	//				if (fingerData.foldedness > 66) {
+	//					finger |= (1 << (2 * f));
+	//				}
+	//				else if (fingerData.foldedness <= 66 && fingerData.foldedness > 33) {
+	//					finger |= (1 << (2 * f + 1));
+	//				}
+	//			}
+	//		}
+	//		rightHandData[nbReadFrameRight] = finger;
+	//		nbReadFrameRight++;
+	//	}
+	//	else {
+	//		nbReadFrameRight = 0;
+
+	//		// calculate the gesture average
+	//		uint32_t average = 0x0;
+	//		uint32_t unite = 0x1;
+	//		for (int b = 0 ; b < 10; b++) {
+	//			int count0 = 0;
+	//			int count1 = 0;
+	//			for (int i = 0; i < MAXFRAME; i++) {
+	//				if (((rightHandData[i] >> b) & 0x1) == 0x0) {
+	//					count0++;
+	//				}
+	//				else {
+	//					count1++;
+	//				}
+	//			}
+	//			if (count0 < count1) {
+	//				average |= (unite << b);
+	//			}
+	//		}
+
+	//		for (int b = 9; b >= 0; b--) {
+	//			std::printf("%d", (average >> b) & 0x1);
+	//		}
+	//		std::printf("\n");
+
+	//		// calculate the Hamming distance
+	//		uint32_t fist = 0b0;
+	//		int distance = 0;
+	//		for (int b = 0; b < 10; b++) {
+	//			if (((average >> b) & 0x1) != ((fist >> b) & 0x1)) {
+	//				distance++;
+	//			}
+	//		}
+
+	//		if (distance < 2) {
+	//			std::printf("\t\t\t RIGHT FIST %d\n", distance);
+	//		}
+
+	//		// calculate the Hamming distance
+	//		uint32_t victory = 0b010100;
+	//		distance = 0;
+	//		for (int b = 0; b < 10; b++) {
+	//			if (((average >> b) & 0x1) != ((victory >> b) & 0x1)) {
+	//				distance++;
+	//			}
+	//		}
+
+	//		if (distance < 2) {
+	//			std::printf("\t\t\t RIGHT VICTORY %d\n", distance);
+	//		}
+	//	}
+	//	break;
+	//default:
+	//	break;
+	//}
+	return;
+}
 
 boolean isFist(PXCHandData::IHand *hand) {
 	PXCHandData::JointData jointData;
-	for (int j = 0; j < 22; ++j)
+	PXCHandData::FingerData fingerData;
+	for (int f = 0; f < 5; f++) {
+		if(hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR){
+			std::printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
+		}
+	}
+	/*for (int j = 0; j < 22; ++j)
 	{
 		if (hand->QueryTrackedJoint((PXCHandData::JointType)j, jointData) == PXC_STATUS_NO_ERROR)
 		{
 			std::printf("     %s)\tX: %f, Y: %f, Z: %f \n", Definitions::JointToString((PXCHandData::JointType)j).c_str(), jointData.positionWorld.x, jointData.positionWorld.y, jointData.positionWorld.z);
 		}
-	}
+	}*/
 	return true;
 }
 
@@ -217,9 +479,9 @@ void main(int argc, const char* argv[])
 						g_handDataOutput->QueryHandData(PXCHandData::ACCESS_ORDER_BY_TIME, i, hand);
 						std::string handSide = "Unknown Hand";
 						handSide = hand->QueryBodySide() == PXCHandData::BODY_SIDE_LEFT ? "Left Hand" : "Right Hand";
-
-						std::printf("%s\n==============\n", handSide.c_str());
-						isFist(hand);
+						//std::printf("%s\n==============\n", handSide.c_str());
+						//isFist(hand);
+						analyseGesture(hand);
 					}
 				}
 

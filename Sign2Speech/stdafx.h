@@ -11,6 +11,7 @@
 #include <tchar.h>
 #include <windows.h>
 #include <iostream>
+#include <vector>
 
 #include "pxcsensemanager.h"
 #include "pxcmetadata.h"
