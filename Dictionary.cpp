@@ -85,12 +85,12 @@ void Dictionary::vectorDictionary(vector<vector<pair<string, long>>>* v, vector<
 		v->push_back(v2);
 	}
 	else {
+		pair<string, long> p(n->getWord(), n->getSymbol());
+		v2.push_back(p);
 		vector<Node *> vtemp = n->getChildrens();
 		for (vector<Node *>::iterator it = vtemp.begin(); it != vtemp.end(); ++it)
 		{
 			//ajouter les infos de n au vecteur v2 et appeller vectorDictionnary sur le fils de n
-			pair<string, long> p(n->getWord(), n->getSymbol());
-			v2.push_back(p);
 			vectorDictionary(v, v2, (*it));
 		}
 	}
