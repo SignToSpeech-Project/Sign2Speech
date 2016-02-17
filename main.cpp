@@ -65,7 +65,10 @@ int main(int argc, const char* argv[])
 	vector< vector< pair<string, long> > > res;
 
 	// parse the json file
+	cout << "Parsing Json file..." << endl;
 	res = p.ReadJsonFile();
+	cout << "Parsing > OK" << endl;
+	cout << "" << endl;
 
 	// insert all the vectors of pairs in the dictionary
 	for (vector<vector<pair<string, long>>>::iterator it = res.begin(); it != res.end(); ++it){
@@ -77,9 +80,16 @@ int main(int argc, const char* argv[])
 	mot = d.read(2);
 	mot = d.read(3);
 	mot = d.read(1);
-	cout << mot << endl;
 
-	vector<vector<pair<string, long>>> v = d.createVectorDictionary(); //Creation vecteur de vecteur de paires à partir du dictionnaire
+	cout << "Vector Dictionary creation..." << endl;
+	vector<vector<pair<string, long>>> v = d.createVectorDictionary(); // Create vector of vectors of pairs from the dict
+	cout << "Vector Dictionary > OK" << endl;
+	cout << "" << endl;
+
+	cout << "Writting Json file from vect..." << endl;
+	p.WriteJsonFile(v);
+	cout << "Json file > OK" << endl;
+	cout << "" << endl;
 
 	while (true);
 	/*Dictionary d;

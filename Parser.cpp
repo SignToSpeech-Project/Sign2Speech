@@ -5,8 +5,17 @@
 #include "include\rapidjson\stringbuffer.h"
 #include "Parser.h"
 
+
 Parser::Parser(char * str) {
 	this->path = str;
+}
+
+string Parser::long_to_hex(long l){
+	stringstream sstream;
+	sstream << "0x"
+		<< std::setfill('0') << std::setw(sizeof(long) * 2)
+		<< std::hex << l;
+	return sstream.str();
 }
 
 vector< vector< pair<string, long> > > Parser::ReadJsonFile (){
@@ -86,3 +95,73 @@ vector< vector< pair<string, long> > > Parser::ReadJsonFile (){
 	return allVectors;
 }
 
+void Parser::InsertWordInJson(vector<pair<string, long>> vec, fstream *file) {
+	int size, i;
+	string curWord;
+	string gesture;
+
+	// check if the file is open
+	if (!(*file).is_open()) {
+		perror("InsertWordInJson: The file is not open\n");
+		return;
+	}
+
+	// write current word which is in the last object of the vector
+	size = vec.size();
+	curWord = vec.at(size - 1).first;
+	*file << "\t\"" << curWord << "\": [" << endl;
+
+	// iterate through the pairs of a word 
+	for (i = 0; i < size; ++i) {
+		// get "word"
+		*file << "\t\t{" << endl;
+		*file << "\t\t\t\"word\": ";
+		*file << "\"" << vec.at(i).first << "\"," << endl;
+
+		// get "gesture"
+		*file << "\t\t\t\"gesture\": ";
+		gesture = long_to_hex(vec.at(i).second);
+		*file << "\"" << gesture << "\"" << endl;
+
+		// print the comma only if it is the last pair
+		if (i == size - 1) {
+			*file << "\t\t}" << endl;
+		}
+		else {
+			*file << "\t\t}," << endl;
+		}
+	}
+}
+
+void Parser::WriteJsonFile(vector <vector <pair <string, long> > > vect) {
+	vector<vector<pair<string, long>>>::iterator it;
+	vector < pair<string, long>>::iterator it2;
+	fstream outputFile;
+	int vectSize;
+	int i = 0;
+
+	// create the output json file if it doesn't exist
+	outputFile.open("output.json", fstream::out);
+
+	outputFile << "{" << endl;
+
+	vectSize = vect.size();
+
+	// iterating through the "big" vector
+	for (it = vect.begin(); it != vect.end(); ++it) {
+		// insert all the words and their gestures
+		InsertWordInJson((*it), &outputFile);
+
+		// print the comma only if it is not the last object 
+		if (i == vectSize - 1) {
+			outputFile << "\t]" << endl;
+		}
+		else {
+			outputFile << "\t]," << endl;
+		}
+		i++;
+	}
+
+	outputFile << "}" << endl;
+	outputFile.close();
+}
