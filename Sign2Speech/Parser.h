@@ -1,3 +1,6 @@
+#ifndef PARSER_HEADER
+#define PARSER_HEADER
+
 #include <cstdio>
 #include <iostream>
 #include <string>
@@ -11,6 +14,7 @@
 #include "include\rapidjson\filereadstream.h"
 #include "include\rapidjson\filewritestream.h"
 #include "include\rapidjson\stringbuffer.h"
+
 
 using std::cout;
 using namespace rapidjson;
@@ -39,3 +43,5 @@ class Parser{
 		// inserts pairs of <string, long> that make a word in a json file
 		void InsertWordInJson(vector<pair<string, long>> vect, fstream *outputFile);
 	};
+
+#endif

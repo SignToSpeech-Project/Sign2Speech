@@ -20,6 +20,9 @@
 #include "pxchanddata.h"
 #include "pxchandconfiguration.h"
 
+#include "Dictionary.h"
+#include "Node.h"
+#include "Parser.h"
 #include "Definitions.h"
 
 
