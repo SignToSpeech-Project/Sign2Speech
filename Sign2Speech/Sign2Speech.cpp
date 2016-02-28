@@ -6,11 +6,7 @@
 using namespace std;
 using std::cout;
 
-bool g_live = false; // true - Working in live camera mode, false - sequence mode
-bool g_gestures = false; // Writing gesture data to console ouput
-bool g_alerts = false; // Writing alerts data to console ouput
 bool g_skeleton = false; // Writing skeleton data (22 joints) to console ouput
-bool g_default = false; // Writing hand type to console ouput
 bool g_stop = false; // user closes application
 
 std::wstring g_sequencePath;
@@ -39,7 +35,7 @@ int calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step) {
 	int dist = 0;
 	uint32_t one = (~(0b0)) >> (32 - step);
 	for (int i = 0; i < nBit/step; i++) {
-		if ((a >> (step * i)) & one != (b >> (step * i)) & one) {
+		if (((a >> (step * i)) & one) != ((b >> (step * i)) & one)) {
 			dist++;
 		}
 	}
@@ -145,21 +141,29 @@ void analyseGesture(PXCHandData::IHand *hand) {
 
 		if (isGesture(average, fist, 1, 2)) {
 			std::printf("[%ld]\t\t %s FIST\n", frameCounter, sideStr.c_str());
+			if(webSock->getReadyState() != WebSocket::CLOSED) {
+				webSock->send("{'content':'Fist'}");
+			}
 		}
 
 		if (isGesture(average, victory, 1, 2)) {
 			std::printf("[%ld]\t\t %s VICTORY\n", frameCounter, sideStr.c_str());
+			if (webSock->getReadyState() != WebSocket::CLOSED) {
+				webSock->send("{'content':'Victory'}");
+			}
 		}
 
 		if (isGesture(average, metal, 1, 2)) {
 			std::printf("[%ld]\t\t %s METAL\n", frameCounter, sideStr.c_str());
+			if (webSock->getReadyState() != WebSocket::CLOSED) {
+				webSock->send("{'content':'Metal'}");
+			}
 		}
 	}
 	return;
 }
 
 void printFold(PXCHandData::IHand *hand) {
-	PXCHandData::JointData jointData;
 	PXCHandData::FingerData fingerData;
 	for (int f = 0; f < 5; f++) {
 		if(hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR){
@@ -248,35 +252,6 @@ void main(int argc, const char* argv[])
 	// Iterating input parameters
 	for (int i = 1; i<argc; i++)
 	{
-		if (strcmp(argv[i], "-live") == 0)
-		{
-			g_live = true;
-		}
-
-		if (strcmp(argv[i], "-seq") == 0)
-		{
-			g_live = false;
-			std::string tmp(argv[i + 1]);
-			i++;
-			g_sequencePath.clear();
-			g_sequencePath.assign(tmp.begin(), tmp.end());
-			continue;
-		}
-
-		if (strcmp(argv[i], "-gestures") == 0)
-		{
-			std::printf("-Gestures Are Enabled-\n");
-			g_handConfiguration->EnableAllGestures();
-			g_gestures = true;
-		}
-
-		if (strcmp(argv[i], "-alerts") == 0)
-		{
-			std::printf("-Alerts Are Enabled-\n");
-			g_handConfiguration->EnableAllAlerts();
-			g_alerts = true;
-		}
-
 		if (strcmp(argv[i], "-skeleton") == 0)
 		{
 			std::printf("-Skeleton Information Enabled-\n");
@@ -290,19 +265,13 @@ void main(int argc, const char* argv[])
 	// Apply configuration setup
 	g_handConfiguration->ApplyChanges();
 
-	// run sequences as fast as possible
-	if (!g_live)
-	{
-		g_senseManager->QueryCaptureManager()->SetFileName(g_sequencePath.c_str(), false);
-		g_senseManager->QueryCaptureManager()->SetRealtime(false);
-	}
+
 	if (g_handConfiguration)
 	{
 		g_handConfiguration->Release();
 		g_handConfiguration = NULL;
 	}
 
-	g_default = !(g_alerts && g_gestures && g_skeleton);
 	pxcI32 numOfHands = 0;
 
 	// First Initializing the sense manager
@@ -310,42 +279,12 @@ void main(int argc, const char* argv[])
 	{
 		std::printf("\nPXCSenseManager Initializing OK\n========================\n");
 
-		if (g_default)
-		{
-			std::printf("Number of hands: %d\n", numOfHands);
-		}
-
 		// Acquiring frames from input device
 		while (g_senseManager->AcquireFrame(true) == PXC_STATUS_NO_ERROR && !g_stop)
 		{
 			// Get current hand outputs
 			if (g_handDataOutput->Update() == PXC_STATUS_NO_ERROR)
 			{
-				// Display alerts
-				if (g_alerts)
-				{
-					PXCHandData::AlertData alertData;
-					for (int i = 0; i < g_handDataOutput->QueryFiredAlertsNumber(); ++i)
-					{
-						if (g_handDataOutput->QueryFiredAlertData(i, alertData) == PXC_STATUS_NO_ERROR)
-						{
-							std::printf("%s was fired at frame %d \n", Definitions::AlertToString(alertData.label).c_str(), alertData.frameNumber);
-						}
-					}
-				}
-
-				// Display gestures
-				if (g_gestures)
-				{
-					PXCHandData::GestureData gestureData;
-					for (int i = 0; i < g_handDataOutput->QueryFiredGesturesNumber(); ++i)
-					{
-						if (g_handDataOutput->QueryFiredGestureData(i, gestureData) == PXC_STATUS_NO_ERROR)
-						{
-							std::wprintf(L"%s, Gesture: %s was fired at frame %d \n", Definitions::GestureStateToString(gestureData.state), gestureData.name, gestureData.frameNumber);
-						}
-					}
-				}
 
 				// Display joints
 				if (g_skeleton)
@@ -359,16 +298,6 @@ void main(int argc, const char* argv[])
 						//std::printf("%s\n==============\n", handSide.c_str());
 						//printFold(hand);
 						analyseGesture(hand);
-					}
-				}
-
-				// Display number of hands
-				if (g_default)
-				{
-					if (numOfHands != g_handDataOutput->QueryNumberOfHands())
-					{
-						numOfHands = g_handDataOutput->QueryNumberOfHands();
-						std::printf("Number of hands: %d\n", numOfHands);
 					}
 				}
 
