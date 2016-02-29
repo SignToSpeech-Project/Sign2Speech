@@ -1,0 +1,26 @@
+{
+	"saucisson": [
+		{
+			"word": "saucisson1",
+			"gesture": "0x00000001"
+		},
+		{
+			"word": "saucisson",
+			"gesture": "0x00000002"
+		}
+	],
+	"maison": [
+		{
+			"word": "maison1",
+			"gesture": "0x00000003"
+		},
+		{
+			"word": "",
+			"gesture": "0x00000004"
+		},
+		{
+			"word": "maison",
+			"gesture": "0x00000005"
+		}
+	]
+}
