@@ -24,6 +24,7 @@
 #include "Node.h"
 #include "Parser.h"
 #include "Definitions.h"
+#include "HandTools.h"
 
 
 
