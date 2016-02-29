@@ -153,6 +153,7 @@
     <ClInclude Include="ConsoleTools.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Dictionary.h" />
+    <ClInclude Include="easywsclient.hpp" />
     <ClInclude Include="HandTools.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Parser.h" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="ConsoleTools.cpp" />
     <ClCompile Include="Dictionary.cpp" />
+    <ClCompile Include="easywsclient.cpp" />
     <ClCompile Include="HandTools.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />

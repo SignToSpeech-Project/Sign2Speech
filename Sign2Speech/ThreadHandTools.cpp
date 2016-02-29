@@ -1,8 +1,26 @@
 #include "ThreadHandTools.h"
 
+// WebSocket
+//#ifdef _WIN32
+//#pragma comment( lib, "ws2_32" )
+//#include <WinSock2.h>
+//#endif
+//#include <assert.h>
+//#include <stdio.h>
+//#include <string>
+
+WebSocket::pointer ThreadHandTools::webSock = NULL;
+
 ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, const char* av[]) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 	argv = av;
 	argc = ac;
+}
+
+void ThreadHandTools::handle_message(const std::string & message){
+	printf(">>> %s\n", message.c_str());
+	if (message == "world") {
+		ThreadHandTools::webSock->close();
+	}
 }
 
 bool ThreadHandTools::CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *ct ) 
@@ -17,7 +35,7 @@ bool ThreadHandTools::CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *
 		g_stop = true;
 		Sleep(1000);
 		ct->releaseAll();
-		*(program_on) = false;
+		//*(program_on) = false;
 		return(TRUE);
 
 	default:
@@ -29,6 +47,20 @@ void ThreadHandTools::run() {
 
 	ConsoleTools ct;
 	mProgram_on->lock();
+
+#ifdef _WIN32
+	INT rc;
+	WSADATA wsaData;
+
+	rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (rc) {
+		printf("WSAStartup Failed.\n");
+		return;
+	}
+#endif
+
+	ThreadHandTools::webSock = WebSocket::from_url("ws://localhost:9000/ws/subtitle");
+	assert(ThreadHandTools::webSock);
 
 while (*program_on) {
 
@@ -158,6 +190,12 @@ while (*program_on) {
 	}
 
 	ct.releaseAll();
+
+	delete ThreadHandTools::webSock;
+
+#ifdef _WIN32
+	WSACleanup();
+#endif
 
 	mProgram_on->lock();
 }

@@ -3,7 +3,9 @@
 #include "ThreadApp.h"
 #include "ConsoleTools.h"
 #include "stdafx.h"
+#include "easywsclient.hpp"
 
+using easywsclient::WebSocket;
 
 class ThreadHandTools : public ThreadApp {
 private :
@@ -19,6 +21,10 @@ private :
 public:
 	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, const char* av[]);
 
+	static WebSocket::pointer webSock;
+
 	bool static CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *ct);
+	void static handle_message(const std::string & message);
+
 	void run();	
 };

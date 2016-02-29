@@ -1,4 +1,5 @@
 #include "HandTools.h"
+#include "ThreadHandTools.h"
 
 
 
@@ -112,23 +113,29 @@ void HandTools::analyseGesture(PXCHandData::IHand *hand) {
 
 		if (isGesture(average, fist, 1, 2)) {
 			std::printf("[%ld]\t\t %s FIST\n", frameCounter, sideStr.c_str());
-			/*if (webSock->getReadyState() != WebSocket::CLOSED) {
-				webSock->send("{'content':'Fist'}");
-			}*/
+			ThreadHandTools::webSock->send("{\"content\":\"Fist\"}");
+			if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
+				ThreadHandTools::webSock->poll();
+				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
+			}
 		}
 
 		if (isGesture(average, victory, 1, 2)) {
 			std::printf("[%ld]\t\t %s VICTORY\n", frameCounter, sideStr.c_str());
-			/*if (webSock->getReadyState() != WebSocket::CLOSED) {
-				webSock->send("{'content':'Victory'}");
-			}*/
+			ThreadHandTools::webSock->send("{\"content\":\"Victory\"}");
+			if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
+				ThreadHandTools::webSock->poll();
+				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
+			}
 		}
 
 		if (isGesture(average, metal, 1, 2)) {
 			std::printf("[%ld]\t\t %s METAL\n", frameCounter, sideStr.c_str());
-			/*if (webSock->getReadyState() != WebSocket::CLOSED) {
-				webSock->send("{'content':'Metal'}");
-			}*/
+			ThreadHandTools::webSock->send("{\"content\":\"Metal\"}");
+			if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
+				ThreadHandTools::webSock->poll();
+				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
+			}
 		}
 	}
 	return;
