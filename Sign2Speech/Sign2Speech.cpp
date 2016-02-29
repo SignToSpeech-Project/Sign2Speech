@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <thread>
 #include <mutex>
+#include <stdio.h>
 #include "Dictionary.h"
 #include "ThreadDictionary.h"
 #include "ThreadHandTools.h"
@@ -16,36 +17,41 @@ vector<long> bufferRead;
 vector<vector<pair<string, long>>> bufferWrite;
 
 
-
-
-
-
-
+bool attendre = true;
 
 //Thread managing the Dictionary
 void threadDico() {
 	ThreadDictionary d(&mProgram_on,&mBufferR,&mBufferW,&program_on,&bufferRead,&bufferWrite);
 	d.run();
-
 }
 
 
 //Thread managing the camera and the gestures recognization
 void threadHandTool(int argc, const char* argv[]) {
-
 	ThreadHandTools d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite,argc, argv);
 	d.run();
 }
 
 
+bool CtrlHandler()
+{
+	mProgram_on.lock();
+	program_on = false;
+	mProgram_on.unlock();
+	while (attendre);
+	return true;
+}
+
 void main(int argc, const char* argv[])
 {
-
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE); 
 	std::thread tHandTools(threadHandTool, argc, argv);
 	std::thread tDico(threadDico);
 
 	tHandTools.join();
 	tDico.join();
+
+	bool attendre = false;
 	
 }
 

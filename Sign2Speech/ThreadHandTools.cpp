@@ -5,40 +5,13 @@ ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, ve
 	argc = ac;
 }
 
-bool ThreadHandTools::CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *ct ) 
-{
-	switch (fdwCtrlType)
-	{
-		// Handle the CTRL-C signal. 
-	case CTRL_C_EVENT:
-
-		// confirm that the user wants to exit. 
-	case CTRL_CLOSE_EVENT:
-		g_stop = true;
-		Sleep(1000);
-		ct->releaseAll();
-		*(program_on) = false;
-		return(TRUE);
-
-	default:
-		return FALSE;
-	}
-}
 
 void ThreadHandTools::run() {
 
 	ConsoleTools ct;
-	mProgram_on->lock();
-
-while (*program_on) {
-
-	mProgram_on->unlock();
-
-	
 
 	HandTools h;
 
-    SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE); //TODO : Pas compris, CtrlHandler c'est une fonction de HandTools
 	if (argc < 2)
 	{
 		Definitions::WriteHelpMessage();
@@ -122,9 +95,11 @@ while (*program_on) {
 	{
 		std::printf("\nPXCSenseManager Initializing OK\n========================\n");
 
+		mProgram_on->lock();
 		// Acquiring frames from input device
-		while ((ct.getSenseManager())->AcquireFrame(true) == PXC_STATUS_NO_ERROR && !g_stop)
+		while ((ct.getSenseManager())->AcquireFrame(true) == PXC_STATUS_NO_ERROR && (*program_on))
 		{
+			mProgram_on->unlock();
 			// Get current hand outputs
 			if (g_handDataOutput->Update() == PXC_STATUS_NO_ERROR)
 			{
@@ -145,9 +120,10 @@ while (*program_on) {
 				}
 
 			} // end if update
-
 			(ct.getSenseManager())->ReleaseFrame();
+			mProgram_on->lock();
 		} // end while acquire frame
+		mProgram_on->unlock();
 	} // end if Init
 
 	else
@@ -158,8 +134,4 @@ while (*program_on) {
 	}
 
 	ct.releaseAll();
-
-	mProgram_on->lock();
-}
-mProgram_on->unlock();
 }

@@ -55,13 +55,13 @@ void ThreadDictionary::run() {
 
 	//Sauvegarde Dico-------------------------------------------------------------------------
 
-	cout << "Vector Dictionary creation..." << endl;
+	//cout << "Vector Dictionary creation..." << endl;
 	vector<vector<pair<string, long>>> v = d.createVectorDictionary(); // Create vector of vectors of pairs from the dict
-	cout << "Vector Dictionary > OK" << endl;
-	cout << "" << endl;
-	cout << "Writting Json file from vect..." << endl;
+	//cout << "Vector Dictionary > OK" << endl;
+	//cout << "" << endl;
+	//cout << "Writting Json file from vect..." << endl;
 	p.WriteJsonFile(v);
-	cout << "Json file > OK" << endl;
-	cout << "" << endl;
+	//cout << "Json file > OK" << endl;
+	//cout << "" << endl;
 
 }
