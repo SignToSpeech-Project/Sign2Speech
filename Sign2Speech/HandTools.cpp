@@ -142,7 +142,7 @@ void HandTools::printFold(PXCHandData::IHand *hand) {
 		}
 	}
 }
-
+/*
 bool HandTools::CtrlHandler(DWORD fdwCtrlType, bool g_stop, PXCSenseManager *g_senseManager, PXCSession *g_session)
 {
 	switch (fdwCtrlType)
@@ -175,4 +175,4 @@ void HandTools::releaseAll(PXCSenseManager *g_senseManager, PXCSession *g_sessio
 		g_session->Release();
 		g_session = NULL;
 	}
-}
+}*/

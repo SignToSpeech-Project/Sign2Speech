@@ -23,9 +23,47 @@ vector<long> bufferRead;
 vector<vector<pair<string, long>>> bufferWrite;
 
 
+
+//TEMP
+
+void releaseAll()
+{
+	if (g_senseManager)
+	{
+		g_senseManager->Close();
+		g_senseManager->Release();
+		g_senseManager = NULL;
+	}
+	if (g_session)
+	{
+		g_session->Release();
+		g_session = NULL;
+	}
+}
+
+bool CtrlHandler(DWORD fdwCtrlType, bool g_stop)
+{
+	switch (fdwCtrlType)
+	{
+		// Handle the CTRL-C signal. 
+	case CTRL_C_EVENT:
+
+		// confirm that the user wants to exit. 
+	case CTRL_CLOSE_EVENT:
+		g_stop = true;
+		Sleep(1000);
+		releaseAll();
+		return(TRUE);
+
+	default:
+		return FALSE;
+	}
+}
+
+
 //Thread managing the Dictionary
 void threadDico() {
-	
+	/*
 	//Initialisation Dico-------------------------------------------------------------------------
 	Dictionary d;
 
@@ -85,6 +123,7 @@ void threadDico() {
 	p.WriteJsonFile(v);
 	cout << "Json file > OK" << endl;
 	cout << "" << endl;
+	*/
 }
 
 
@@ -100,6 +139,7 @@ void threadHandTools(int argc, const char* argv[]) {
 		Definitions::appName = argv[0];
 
 		//TODO : Instancier HandTools
+		HandTools h;
 
 		SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE); //TODO : Pas compris, CtrlHandler c'est une fonction de HandTools
 		if (argc < 2)
@@ -203,7 +243,7 @@ void threadHandTools(int argc, const char* argv[]) {
 							handSide = hand->QueryBodySide() == PXCHandData::BODY_SIDE_LEFT ? "Left Hand" : "Right Hand";
 							//std::printf("%s\n==============\n", handSide.c_str());
 							//printFold(hand);
-							analyseGesture(hand); //TODO : Fonction dans HandTools
+							h.analyseGesture(hand); //TODO : Fonction dans HandTools
 						}
 					}
 

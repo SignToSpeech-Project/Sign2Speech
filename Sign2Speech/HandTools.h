@@ -1,5 +1,8 @@
 #include "stdafx.h"
 
+#ifndef DEF_HT
+#define DEF_HT
+
 #define MAXFRAME 21
 #define DEBUG true
 
@@ -48,3 +51,6 @@ public :
 	void releaseAll(PXCSenseManager *g_senseManager, PXCSession *g_session);
 
 };
+
+
+#endif
