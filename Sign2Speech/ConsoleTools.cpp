@@ -1,12 +1,6 @@
 #include "stdafx.h"
 #include "ConsoleTools.h"
 
-
-ConsoleTools::ConsoleTools()
-{
-}
-
-
 void ConsoleTools::releaseAll()
 {
 	if (g_senseManager)
