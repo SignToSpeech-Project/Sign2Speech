@@ -1,12 +1,11 @@
 #include "ThreadHandTools.h"
-#include "ConsoleTools.h"
 
 ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, const char* av[]) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 	argv = av;
 	argc = ac;
 }
 
-bool CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *ct ) 
+bool ThreadHandTools::CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *ct ) 
 {
 	switch (fdwCtrlType)
 	{
@@ -18,6 +17,7 @@ bool CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *ct )
 		g_stop = true;
 		Sleep(1000);
 		ct->releaseAll();
+		*(program_on) = false;
 		return(TRUE);
 
 	default:

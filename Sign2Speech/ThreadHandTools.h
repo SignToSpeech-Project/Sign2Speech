@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ThreadApp.h"
+#include "ConsoleTools.h"
 #include "stdafx.h"
 
 
@@ -18,5 +19,6 @@ private :
 public:
 	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, const char* av[]);
 
+	bool static CtrlHandler(DWORD fdwCtrlType, bool g_stop, ConsoleTools *ct);
 	void run();	
 };

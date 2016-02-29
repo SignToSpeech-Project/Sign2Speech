@@ -110,26 +110,26 @@ void HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		}
 		std::printf("\n");
 
-		/*if (isGesture(average, fist, 1, 2)) {
+		if (isGesture(average, fist, 1, 2)) {
 			std::printf("[%ld]\t\t %s FIST\n", frameCounter, sideStr.c_str());
-			if (webSock->getReadyState() != WebSocket::CLOSED) {
+			/*if (webSock->getReadyState() != WebSocket::CLOSED) {
 				webSock->send("{'content':'Fist'}");
-			}
+			}*/
 		}
 
 		if (isGesture(average, victory, 1, 2)) {
 			std::printf("[%ld]\t\t %s VICTORY\n", frameCounter, sideStr.c_str());
-			if (webSock->getReadyState() != WebSocket::CLOSED) {
+			/*if (webSock->getReadyState() != WebSocket::CLOSED) {
 				webSock->send("{'content':'Victory'}");
-			}
+			}*/
 		}
 
 		if (isGesture(average, metal, 1, 2)) {
 			std::printf("[%ld]\t\t %s METAL\n", frameCounter, sideStr.c_str());
-			if (webSock->getReadyState() != WebSocket::CLOSED) {
+			/*if (webSock->getReadyState() != WebSocket::CLOSED) {
 				webSock->send("{'content':'Metal'}");
-			}
-		}*/
+			}*/
+		}
 	}
 	return;
 }
