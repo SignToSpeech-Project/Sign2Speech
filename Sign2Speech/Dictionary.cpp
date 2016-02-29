@@ -37,12 +37,12 @@ bool Dictionary::isPresent(long symbol) {
 	return currentNode->isPresent(symbol);
 }
 
-//Update currentNode if it is posssible and return "". Otherwhise, reset currentNode (currentNode = racine) and return the previous currentNode word value
+//Update currentNode if it is posssible and return "0x0 : Not final word". Otherwhise, reset currentNode (currentNode = racine) and return the previous currentNode word value
 string Dictionary::read(long symbol) {
 	Node* n = currentNode->getChildren(symbol);
 	if (n != NULL) {
 		currentNode = n;
-		return "retourne vide";
+		return "0x0 : Not final word";
 	}
 	else {
 		string word = currentNode->getWord();

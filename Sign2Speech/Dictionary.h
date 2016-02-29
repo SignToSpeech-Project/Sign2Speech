@@ -33,7 +33,7 @@ public:
 	//Return true if the children of the currentNode with the symbol symbol exist. Otherwhise, false
 	bool isPresent(long symbol);
 
-	//Update currentNode if it is posssible and return "". Otherwhise, reset currentNode (currentNode = racine) and return the previous currentNode word value
+	//Update currentNode if it is posssible and return "0x0 : Not final word". Otherwhise, reset currentNode (currentNode = racine) and return the previous currentNode word value
 	string read(long symbol);
 
 	//Return the word of the currentNode
