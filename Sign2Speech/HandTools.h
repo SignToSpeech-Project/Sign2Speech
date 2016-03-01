@@ -45,11 +45,6 @@ public :
 	void analyseGesture(PXCHandData::IHand *hand);
 
 	void printFold(PXCHandData::IHand *hand);
-
-	bool CtrlHandler(DWORD fdwCtrlType, bool g_stop, PXCSenseManager *g_senseManager, PXCSession *g_session);
-
-	void releaseAll(PXCSenseManager *g_senseManager, PXCSession *g_session);
-
 };
 
 

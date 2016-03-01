@@ -15,7 +15,7 @@ string Dictionary::getWordCurrentNode() {
 
 //Insert in the dictionary the symbol linked to a word as a children of the currentNode. You don't need to check if it's already in the children of the currentNode
 Node* Dictionary::insert(string word, long symbol) {
-	return currentNodeCreation->addNode(word,symbol);
+	return currentNodeCreation->addNode(word, symbol);
 }
 
 //Creation from the racine of the tree of the list of symbol/pair you sent
@@ -63,14 +63,14 @@ string Dictionary::refreshDictionary() {
 
 //Return the vector of vector of pairs of the current Dictionnary
 vector<vector<pair<string, long>>> Dictionary::createVectorDictionary() {
-	
+
 	vector<vector<pair<string, long>>> v;
 
 	vector<pair<string, long>> v2;
 	vector<Node *>::iterator it;
 	vector<Node *> vtemp = racine->getChildrens();
-	for ( it = vtemp.begin(); it != vtemp.end(); ++it) {
-		vectorDictionary(&v, v2, (*it)); 
+	for (it = vtemp.begin(); it != vtemp.end(); ++it) {
+		vectorDictionary(&v, v2, (*it));
 	}
 	return v;
 }
