@@ -64,7 +64,7 @@ uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[MAXFRAME][
 	return avg;
 }
 
-void HandTools::analyseGesture(PXCHandData::IHand *hand) {
+long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 	// increment frame number
 	frameCounter++;
 
@@ -137,8 +137,10 @@ void HandTools::analyseGesture(PXCHandData::IHand *hand) {
 				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
 			}
 		}
+		//TODO : déplacer les envois au serveur/application de sous titrage dans les TODO affichage de la classe threaddictionary
+		return average;
 	}
-	return;
+	return -1;
 }
 
 void HandTools::printFold(PXCHandData::IHand *hand) {

@@ -1,6 +1,7 @@
 #pragma once
 #include "ThreadApp.h"
 #include "stdafx.h"
+#include <Time.h>
 
 
 class ThreadDictionary : public ThreadApp {

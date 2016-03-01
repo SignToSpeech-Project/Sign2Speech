@@ -42,7 +42,7 @@ public :
 
 	uint32_t calculateAverage(PXCHandData::FingerData handData[MAXFRAME][5]);
 
-	void analyseGesture(PXCHandData::IHand *hand);
+	long analyseGesture(PXCHandData::IHand *hand);
 
 	void printFold(PXCHandData::IHand *hand);
 };

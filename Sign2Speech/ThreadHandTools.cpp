@@ -39,7 +39,7 @@ void ThreadHandTools::run() {
 #endif
 
 	ThreadHandTools::webSock = WebSocket::from_url("ws://localhost:9000/ws/subtitle");
-	assert(ThreadHandTools::webSock);
+	//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 
 
@@ -148,7 +148,12 @@ void ThreadHandTools::run() {
 						handSide = hand->QueryBodySide() == PXCHandData::BODY_SIDE_LEFT ? "Left Hand" : "Right Hand";
 						//std::printf("%s\n==============\n", handSide.c_str());
 						//printFold(hand);
-						h.analyseGesture(hand); //TODO : Fonction dans HandTools
+						long symbol = h.analyseGesture(hand);
+						if (symbol != -1) {
+							mBufferR->lock();
+							bufferRead->push_back(symbol);
+							mBufferR->unlock();
+						}
 					}
 				}
 

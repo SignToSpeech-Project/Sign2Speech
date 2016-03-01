@@ -1,6 +1,6 @@
 #include "ThreadDictionary.h"
 
-ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW) : ThreadApp(mP,mBR,mBW,pg,bR,bW) {}
+ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {}
 
 void ThreadDictionary::run() {
 	//Initialisation Dico-------------------------------------------------------------------------
@@ -22,6 +22,8 @@ void ThreadDictionary::run() {
 		d.insertList((*it));
 	}
 
+	time_t start = time(0);
+
 	mProgram_on->lock();
 	while (*program_on) {
 		mProgram_on->unlock();
@@ -36,16 +38,26 @@ void ThreadDictionary::run() {
 		}
 		mBufferW->unlock();
 
-		mBufferR->lock();
-		//TODO : Reset dico au bout d'un timeOut
-		if (bufferRead->size() != 0) { //Get CurrentSymbol
-			for (vector<long>::iterator it = bufferRead->begin(); it != bufferRead->end(); ++it) {
-				string currentSymbol = d.read(*it);
-				if (currentSymbol != "0x0 : Not final word") {
-					//TODO : Affichage à l'écran du mot correspondant
-				}
-				bufferRead->erase(it);
+		double seconds_since_start = difftime(time(0), start);
+		if (seconds_since_start > 5) { //TIMEOUT
+			string currentSymbol = d.refreshDictionary();
+			if ((currentSymbol != "") && (currentSymbol != "racine")) {
+				//TODO : Affichage à l'écran du mot correspondant
 			}
+			cout << "reset " << endl;
+			start = time(0);
+		}
+
+		mBufferR->lock();
+		if (bufferRead->size() != 0) { //Get CurrentSymbol
+			vector<long>::iterator it = bufferRead->begin();
+			string currentSymbol = d.read(*it);
+			//cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
+			if (currentSymbol != "0x0 : Not final word") {
+				//TODO : Affichage à l'écran du mot correspondant
+			}
+			bufferRead->erase(it);
+			start = time(0);
 		}
 		mBufferR->unlock();
 
