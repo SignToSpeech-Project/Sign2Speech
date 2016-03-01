@@ -41,14 +41,28 @@ bool Dictionary::isPresent(long symbol) {
 string Dictionary::read(long symbol) {
 	Node* n = currentNode->getChildren(symbol);
 	if (n != NULL) {
-		currentNode = n;
-		return "0x0 : Not final word";
+		if (n->hasChildrens()) {
+			currentNode = n;
+			return "0x0 : Not final word";
+		}
+		else { //If the current word is a final word
+			string word = n->getWord();
+			currentNode = racine;
+			return word;
+		}
 	}
 	else {
 		string word = currentNode->getWord();
 		currentNode = racine;
 		n = currentNode->getChildren(symbol); //To not lost the current symbol
-		if (n != NULL) currentNode = n;
+		if (n != NULL) {
+			if(n->hasChildrens()) currentNode = n;
+			else { //If the next symbol has a meaning and is a final word, instead of waiting next call to return the final word, it return "old word + new word"
+				string temp = n->getWord();
+				if (temp != "") word += " " + temp;
+				currentNode = racine;
+			}
+		}
 		return word;
 	}
 }

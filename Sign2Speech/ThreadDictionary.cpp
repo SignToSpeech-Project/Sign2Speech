@@ -52,7 +52,7 @@ void ThreadDictionary::run() {
 		if (bufferRead->size() != 0) { //Get CurrentSymbol
 			vector<long>::iterator it = bufferRead->begin();
 			string currentSymbol = d.read(*it);
-			//cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
+			cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
 			if (currentSymbol != "0x0 : Not final word") {
 				//TODO : Affichage à l'écran du mot correspondant
 			}

@@ -148,11 +148,13 @@ void ThreadHandTools::run() {
 						handSide = hand->QueryBodySide() == PXCHandData::BODY_SIDE_LEFT ? "Left Hand" : "Right Hand";
 						//std::printf("%s\n==============\n", handSide.c_str());
 						//printFold(hand);
+
 						long symbol = h.analyseGesture(hand);
-						if (symbol != -1) {
+						if ((symbol != -1) && (symbol != lastSymbolRead )) {
 							mBufferR->lock();
 							bufferRead->push_back(symbol);
 							mBufferR->unlock();
+							lastSymbolRead = symbol;  //Allow the user to keep for example his "fist" gesture during some seconds without changing the dictionary reading level
 						}
 					}
 				}

@@ -7,6 +7,10 @@
       {
           "word": "saucisson",
           "gesture": "0x2"
+      },
+     {
+          "word": "jambon",
+          "gesture": "0x7"
       }
   ],
   "maison": [
@@ -21,6 +25,12 @@
       {
           "word": "maison",
           "gesture": "0x5"
+      }
+  ],
+ "oiseau": [
+      {
+          "word": "oiseau",
+          "gesture": "0x6"
       }
   ]
 }

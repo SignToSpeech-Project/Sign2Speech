@@ -16,6 +16,8 @@ private :
 	bool g_skeleton = false; // Writing skeleton data (22 joints) to console ouput
 	bool g_stop = false; // user closes application
 
+	long lastSymbolRead = -1;
+
 	int argc;
 	const char** argv;
 public:
