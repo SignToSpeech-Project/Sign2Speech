@@ -1,4 +1,5 @@
 #include "ThreadDictionary.h"
+#include "ThreadHandTools.h"
 
 ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {}
 
@@ -43,6 +44,11 @@ void ThreadDictionary::run() {
 			string currentSymbol = d.refreshDictionary();
 			if ((currentSymbol != "") && (currentSymbol != "racine")) {
 				//TODO : Affichage à l'écran du mot correspondant
+				ThreadHandTools::webSock->send("{\"content\":\""+ currentSymbol +"\"}");
+				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
+					ThreadHandTools::webSock->poll();
+					ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
+				}
 			}
 			cout << "reset " << endl;
 			start = time(0);
@@ -53,8 +59,13 @@ void ThreadDictionary::run() {
 			vector<long>::iterator it = bufferRead->begin();
 			string currentSymbol = d.read(*it);
 			cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
-			if (currentSymbol != "0x0 : Not final word") {
+			if ((currentSymbol != "0x0 : Not final word") && (currentSymbol != "racine")) {
 				//TODO : Affichage à l'écran du mot correspondant
+				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");
+				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
+					ThreadHandTools::webSock->poll();
+					ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
+				}
 			}
 			bufferRead->erase(it);
 			start = time(0);

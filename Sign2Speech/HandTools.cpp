@@ -111,7 +111,7 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		}
 		std::printf("\n");
 
-		if (isGesture(average, fist, 1, 2)) {
+		/*if (isGesture(average, fist, 1, 2)) {
 			std::printf("[%ld]\t\t %s FIST\n", frameCounter, sideStr.c_str());
 			ThreadHandTools::webSock->send("{\"content\":\"Fist\"}");
 			if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
@@ -136,7 +136,7 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 				ThreadHandTools::webSock->poll();
 				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
 			}
-		}
+		}*/
 		//TODO : déplacer les envois au serveur/application de sous titrage dans les TODO affichage de la classe threaddictionary
 		return average;
 	}

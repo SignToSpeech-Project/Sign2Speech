@@ -1,15 +1,7 @@
 {
   "saucisson": [
-      {
-          "word": "saucisson1",
-          "gesture": "0x1"
-      },
-      {
-          "word": "saucisson",
-          "gesture": "0x2"
-      },
      {
-          "word": "jambon",
+          "word": "saucisson",
           "gesture": "0x7"
       }
   ],
@@ -32,5 +24,41 @@
           "word": "oiseau",
           "gesture": "0x6"
       }
+  ],
+  "lundi": [
+    {
+      "word": "lundi",
+      "gesture": "0xA"
+    }
+  ],
+  "mardi": [
+    {
+      "word": "mardi",
+      "gesture": "0x2"
+    }
+  ],
+  "mercredi": [
+    {
+      "word": "mercredi",
+      "gesture": "0x155"
+    }
+  ],
+  "jeudi": [
+    {
+      "word": "jeudi",
+      "gesture": "0x202"
+    }
+  ],
+  "vendredi": [
+    {
+      "word": "vendredi",
+      "gesture": "0x28"
+    }
+  ],
+  "samedi": [
+    {
+      "word": "samedi",
+      "gesture": "0x0"
+    }
   ]
 }

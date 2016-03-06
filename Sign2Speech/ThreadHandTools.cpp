@@ -38,7 +38,7 @@ void ThreadHandTools::run() {
 	}
 #endif
 
-	ThreadHandTools::webSock = WebSocket::from_url("ws://localhost:9000/ws/subtitle");
+	ThreadHandTools::webSock = WebSocket::from_url("ws://localhost:9000/ws/subtitle/test");
 	//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 
