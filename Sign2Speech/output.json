@@ -43,10 +43,14 @@
 			"gesture": "0x00000155"
 		}
 	],
-	"jeudi": [
+	"JeudiVendredi": [
 		{
 			"word": "jeudi",
 			"gesture": "0x00000202"
+		},
+		{
+			"word": "JeudiVendredi",
+			"gesture": "0x00000028"
 		}
 	],
 	"vendredi": [

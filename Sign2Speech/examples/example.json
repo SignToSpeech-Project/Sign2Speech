@@ -60,5 +60,15 @@
       "word": "samedi",
       "gesture": "0x0"
     }
+  ],
+  "JeudiVendredi": [
+    {
+      "word": "jeudi",
+      "gesture": "0x202"
+    },
+    {
+      "word": "JeudiVendredi",
+      "gesture": "0x28"
+    }
   ]
 }
