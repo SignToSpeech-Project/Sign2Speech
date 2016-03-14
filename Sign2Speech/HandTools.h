@@ -3,7 +3,7 @@
 #ifndef DEF_HT
 #define DEF_HT
 
-#define MAXFRAME 21
+#define MAXFRAME 31
 #define DEBUG true
 
 using namespace std;

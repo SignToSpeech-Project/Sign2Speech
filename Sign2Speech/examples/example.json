@@ -8,7 +8,7 @@
   "maison": [
       {
           "word": "maison1",
-          "gesture": "0x3"
+          "gesture": "0xcaca"
       },
       {
           "word": "",
@@ -28,13 +28,13 @@
   "lundi": [
     {
       "word": "lundi",
-      "gesture": "0xA"
+      "gesture": "0xF"
     }
   ],
   "mardi": [
     {
       "word": "mardi",
-      "gesture": "0x2"
+      "gesture": "0x3"
     }
   ],
   "mercredi": [
@@ -46,13 +46,13 @@
   "jeudi": [
     {
       "word": "jeudi",
-      "gesture": "0x202"
+      "gesture": "0x303"
     }
   ],
   "vendredi": [
     {
       "word": "vendredi",
-      "gesture": "0x28"
+      "gesture": "0x3C"
     }
   ],
   "samedi": [
@@ -64,11 +64,11 @@
   "JeudiVendredi": [
     {
       "word": "jeudi",
-      "gesture": "0x202"
+      "gesture": "0x303"
     },
     {
       "word": "JeudiVendredi",
-      "gesture": "0x28"
+      "gesture": "0x3c"
     }
   ]
 }

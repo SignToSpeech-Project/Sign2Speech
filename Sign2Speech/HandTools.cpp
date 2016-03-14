@@ -54,11 +54,21 @@ uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[MAXFRAME][
 			sumFold += handData[i][f].foldedness;
 		}
 		sumFold /= MAXFRAME;
-		if (sumFold > 66) {
-			avg |= (0b10 << (2 * f));
+		if (sumFold < 50) {
+			if (sumFold < 25) {
+				avg |= (0b00 << (2 * f));
+			}
+			else {
+				avg |= (0b01 << (2 * f));
+			}
 		}
-		else if (sumFold <= 66 && sumFold > 33) {
-			avg |= (0b01 << (2 * f));
+		else if (sumFold >= 50) {
+			if (sumFold < 75) {
+				avg |= (0b10 << (2 * f));
+			}
+			else {
+				avg |= (0b11 << (2 * f));
+			}
 		}
 	}
 	return avg;
