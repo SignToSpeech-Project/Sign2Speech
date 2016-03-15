@@ -3,7 +3,7 @@
 
 Dictionary::Dictionary()
 {
-	racine = new Node("racine", 0);
+	racine = new Node("Ox1 : racine", 0);
 	currentNode = racine;
 	currentNodeCreation = racine;
 }

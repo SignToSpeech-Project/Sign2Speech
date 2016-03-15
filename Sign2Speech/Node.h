@@ -5,6 +5,8 @@
 using std::vector;
 using std::string;
 
+#define SEUIL 11
+
 //Key : symbol. Value : word
 class Node
 {
@@ -15,6 +17,8 @@ private:
 	vector <Node*> childrens;
 	long symbol;
 	string word;
+
+	int scoreFingers(long s1, long s2); //Return the amount of difference of the fingers between 2 symbols
 
 public:
 

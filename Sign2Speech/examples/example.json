@@ -8,7 +8,7 @@
   "maison": [
       {
           "word": "maison1",
-          "gesture": "0xcaca"
+          "gesture": "0x2"
       },
       {
           "word": "",
@@ -28,7 +28,7 @@
   "lundi": [
     {
       "word": "lundi",
-      "gesture": "0xF"
+      "gesture": "0xFFFFF"
     }
   ],
   "mardi": [

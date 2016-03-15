@@ -24,7 +24,7 @@ void ThreadHandTools::handle_message(const std::string & message) {
 }
 
 void ThreadHandTools::run() {
-
+	
 	ConsoleTools ct;
 
 #ifdef _WIN32
@@ -176,7 +176,6 @@ void ThreadHandTools::run() {
 	ct.releaseAll();
 
 	delete ThreadHandTools::webSock;
-
 #ifdef _WIN32
 	WSACleanup();
 #endif

@@ -44,15 +44,59 @@ bool Node::isPresent(long s) {
 	return false;
 }
 
+//Return the amount of difference of the fingers between 2 symbols
+
+int Node::scoreFingers(long s1, long s2) {
+	int nbdif = 0;
+	int eg = 0;
+	int em = 0;
+	int es = 0;
+	int fs1;
+	int fs2;
+	int diffFingers;
+
+	for (int f = 0; f <= 4; f++) {
+		fs1 = (s1 >> (2 * f) ) & 0b11;
+		fs2 = (s2 >> (2 * f)) & 0b11;
+		diffFingers = abs(fs1 - fs2);
+		if (diffFingers == 1) {
+			es++;
+			nbdif++;
+		}
+		else if (diffFingers == 2) {
+			em++;
+			nbdif++;
+		}
+
+		else if (diffFingers == 3) {
+			eg++;
+			nbdif++;
+		}
+
+	}
+	return 10 * eg + 3 * em + es + nbdif;
+}
+
 //Return the children of this node with the symbol s. Otherwise return NULL
 Node* Node::getChildren(long s) {
+	int score = 1000;
+	int tempScore = 1000;
+	Node* tempNode = NULL;
+	int seuil = 11; 
 	for (vector<Node *>::iterator it = childrens.begin(); it != childrens.end(); ++it)
 	{
-		if (((*it)->symbol == s)) {
+		if (((*it)->symbol == s)) { //Optimisation because we already found the exact symbol
 			return (*it);
 		}
+		tempScore = scoreFingers(s, (*it)->symbol);
+		if (tempScore < score) {
+			score = tempScore;
+			tempNode = (*it);
+		}
 	}
-	return NULL;
+	if (score < SEUIL) 	return tempNode;
+	
+	else return NULL;
 }
 
 vector <Node*> Node::getChildrens() {

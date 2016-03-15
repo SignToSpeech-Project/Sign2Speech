@@ -43,14 +43,12 @@ void ThreadDictionary::run() {
 		if (seconds_since_start > 5) { //TIMEOUT
 			string currentSymbol = d.refreshDictionary();
 			if ((currentSymbol != "") && (currentSymbol != "racine")) {
-				//TODO : Affichage à l'écran du mot correspondant
 				ThreadHandTools::webSock->send("{\"content\":\""+ currentSymbol +"\"}");
 				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
 					ThreadHandTools::webSock->poll();
 					ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
 				}
 			}
-			cout << "reset " << endl;
 			start = time(0);
 		}
 
@@ -60,7 +58,6 @@ void ThreadDictionary::run() {
 			string currentSymbol = d.read(*it);
 			cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
 			if ((currentSymbol != "0x0 : Not final word") && (currentSymbol != "racine")) {
-				//TODO : Affichage à l'écran du mot correspondant
 				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");
 				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
 					ThreadHandTools::webSock->poll();
