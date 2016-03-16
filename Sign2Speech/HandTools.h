@@ -3,8 +3,14 @@
 #ifndef DEF_HT
 #define DEF_HT
 
-#define MAXFRAME 31
+#define MAXFRAME 41
 #define DEBUG true
+#define NBMETERS_STATIC 0.01
+#define ERR_STRAIGHT 0.02
+#define VALID_HOR 0.02
+#define VALID_VER 0.03
+#define NBMETERS_FULLELLIPSE 0.05
+#define ERR_ELLIPSE 0.20
 
 using namespace std;
 using std::cout;
@@ -20,12 +26,11 @@ private :
 
 	std::wstring g_sequencePath;
 
-
-
 	int nbReadFrameRight = 0;
 	int nbReadFrameLeft = 0;
 	PXCHandData::FingerData rightHandData[MAXFRAME][5];
 	PXCHandData::FingerData leftHandData[MAXFRAME][5];
+	PXCPoint3DF32 massCenterCoordinates[MAXFRAME];
 	const uint32_t unite = 0b1;
 
 	uint64_t frameCounter = 0;
@@ -43,6 +48,18 @@ public :
 	uint32_t calculateAverage(PXCHandData::FingerData handData[MAXFRAME][5]);
 
 	long analyseGesture(PXCHandData::IHand *hand);
+
+	uint8_t analyseMovement();
+
+	bool isStatic(uint8_t *out);
+
+	bool isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf);
+
+	bool isVertical(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf);
+
+	bool isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out);
+
+	bool isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out);
 
 	void printFold(PXCHandData::IHand *hand);
 };

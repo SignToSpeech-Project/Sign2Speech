@@ -108,12 +108,16 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 				handData[*nbReadFrame][f] = fingerData;
 			}
 		}
+		// add the coordinates of the mass center into the table
+		massCenterCoordinates[*nbReadFrame] = hand->QueryMassCenterWorld();
 		(*nbReadFrame)++;
 	}
 	else {
 		*nbReadFrame = 0;
 
 		uint32_t average = calculateAverage(handData);
+		uint8_t movement = analyseMovement();
+		average |= movement << 10;
 
 		std::printf("[%ld]\t", frameCounter);
 		for (int b = 9; b >= 0; b--) {
@@ -195,3 +199,241 @@ void HandTools::releaseAll(PXCSenseManager *g_senseManager, PXCSession *g_sessio
 		g_session = NULL;
 	}
 }*/
+
+
+/* Analyse the movement of the gesture (straight, circular or elliptic) from all the points that compose the gesture */
+uint8_t HandTools::analyseMovement() {
+
+	// coordinates of the first point of the movement
+	PXCPoint3DF32 p0 = massCenterCoordinates[0];
+
+	// coordinates of the middle point of the movement
+	PXCPoint3DF32 pm = massCenterCoordinates[(int)(MAXFRAME/2)];
+
+	// coordinates of the last point of the movement
+	PXCPoint3DF32 pf = massCenterCoordinates[MAXFRAME - 1];
+
+	uint8_t temp = 0b0 ;
+
+	if (isStatic(&temp)) {
+		return temp;
+	}
+	else if (isStraight(p0, pm, pf, &temp)) {
+		// do things with temp and symb
+		return temp;
+	}
+	else if (isElliptic(p0, pm, pf, &temp)) {
+		// do things with temp and symb
+		return temp;
+	}
+	return 0;
+}
+
+bool HandTools::isStatic(uint8_t *out) {
+	int i;
+	int cpt = 0;
+	PXCPoint3DF32 p0 = massCenterCoordinates[0];
+	PXCPoint3DF32 p_current;
+
+	for (i = 1; i < MAXFRAME; i++) {
+		p_current = massCenterCoordinates[i];
+		if ((abs(p0.x - p_current.x) <= NBMETERS_STATIC) && (abs(p0.y - p_current.y) <= NBMETERS_STATIC)) {
+			cpt++;
+		}
+		p0 = p_current;
+	}
+	cout << cpt << endl;
+	if (cpt > (float)MAXFRAME*0.95) {
+		cout << "STATIQUE" << endl;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+// horizontal movement detected
+bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
+	if ((abs(p0.x - pf.x) > VALID_HOR) && (abs(p0.y - pf.y) <= VALID_HOR)) {
+		cout << "STRAIGHT HORIZONTAL" << endl;
+		return true;
+	}
+	return false;
+}
+
+// vertical movement detected
+bool HandTools::isVertical(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
+	if ((abs(p0.y - pf.y) > VALID_VER) && (abs(p0.x - pf.x) <= VALID_VER)) {
+		cout << "STRAIGHT VERTICAL" << endl;
+		return true;
+	}
+	return false;
+}
+
+// straight (line) movement detected
+bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out) {
+
+	// y = ax + b ; a is the slope, b is the intercept
+	float a, b;
+	if ((pf.x - p0.x) == 0) {
+		a = 0.0;
+	}
+	else {
+		a = (pf.y - p0.y) / (pf.x - p0.x);
+	}
+	b = p0.y - a*p0.x;
+
+	// does it respect the equation of a straight line?
+	if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT) {
+		// is it horizontal?
+		if (isHorizontal(p0, pm, pf)) {
+			// which direction: left or right?
+			if (p0.x - pf.x > 0) {
+				cout << "    RIGHT" << endl;
+				*out |= 0b1;
+				for (int b = 7; b >= 0; b--) {
+					std::printf("%d", (*out >> b) & 0x1);
+				}
+				std::printf("\n");
+				return true;
+			}
+			else {
+				cout << "    LEFT" << endl;
+				*out |= (0b1 << 1);
+				for (int b = 7; b >= 0; b--) {
+					std::printf("%d", (*out >> b) & 0x1);
+				}
+				std::printf("\n");
+				return true;
+			}
+		}
+		// is it vertical?
+		else if (isVertical(p0, pm, pf)) {
+			// which direction: top or bottom?
+			if (p0.y - pf.y > 0) {
+				cout << "    BOTTOM" << endl;
+				*out |= (0b1 << 3);
+				for (int b = 7; b >= 0; b--) {
+					std::printf("%d", (*out >> b) & 0x1);
+				}
+				std::printf("\n");
+				return true;
+			}
+			else {
+				cout << "    TOP" << endl;
+				*out |= (0b1 << 2);
+				for (int b = 7; b >= 0; b--) {
+					std::printf("%d", (*out >> b) & 0x1);
+				}
+				std::printf("\n");
+				return true;
+			}
+		}
+		// not horizontal nor vertical: it's a normal straight line!
+		else {
+			// if p0.y < pf.y -> to the top
+			if (p0.y < pf.y) {
+				*out |= (0b1 << 2);
+				if (p0.x - pf.x > 0) {
+					cout << "\t\tNORMAL TOP RIGHT" << endl;
+					*out |= 0b1;
+					for (int b = 7; b >= 0; b--) {
+						std::printf("%d", (*out >> b) & 0x1);
+					}
+					std::printf("\n");
+					return true;
+				}
+				else {
+					cout << "\t\tNORMAL TOP LEFT" << endl;
+					*out |= (0b1 << 1);
+					for (int b = 7; b >= 0; b--) {
+						std::printf("%d", (*out >> b) & 0x1);
+					}
+					std::printf("\n");
+					return true;
+				}
+			}
+			// if p0.y > pf.y -> to the bottom
+			else if (p0.y > pf.y) {
+				*out |= (0b1 << 3);
+				if (p0.x - pf.x > 0) {
+					cout << "\t\tNORMAL BOTTOM RIGHT" << endl;
+					*out |= 0b1;
+					for (int b = 7; b >= 0; b--) {
+						std::printf("%d", (*out >> b) & 0x1);
+					}
+					std::printf("\n");
+					return true;
+				}
+				else {
+					cout << "\t\tNORMAL BOTTOM LEFT" << endl;
+					*out |= (0b1 << 1);
+					for (int b = 7; b >= 0; b--) {
+						std::printf("%d", (*out >> b) & 0x1);
+					}
+					std::printf("\n");
+					return true;
+				}
+			}
+		} // end else it's a normal straight line
+	} // end if "it respects the equation of a straight line"
+	else {
+		return false;
+	}
+}
+bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out) {
+	// center coordinates pc(xc, yc)
+	PXCPoint3DF32 pc;
+
+	// NOT FULL ELLIPSE if the distance between first and last point > NBMETERS_FULLECLIPSE
+	if (sqrt(pow(pf.x - p0.x, 2) + pow(pf.y - p0.y, 2)) > NBMETERS_FULLELLIPSE) {
+		pc.x = (pf.x + p0.x) / 2.0;
+		pc.y = (pf.y + p0.y) / 2.0;
+
+		// a is the distance between pf(pf.x, pf.y) and pc(pc.x, pc.y)
+		float a = sqrt(pow(pf.x - pc.x, 2) + pow(pf.x - pc.y, 2));
+		// b is the distance between pm(pm.x, pm.y) and pc(pc.x, pc.y)
+		float b = sqrt(pow(pm.x - pc.x, 2) + pow(pm.y - pc.y, 2));
+
+		// chose 1 point, different from p0, pm and pf, to see if it respects the ellipse eq
+		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(MAXFRAME / 3)];
+		if ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE) {
+			cout << "NOT FULL ELLIPSE" << endl;
+			*out |= (0b1 << 7);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	// FULL ELLIPSE if distance between first and last point <= NBMETERS_FULLECLIPSE
+	else if (sqrt(pow(pf.x - p0.x, 2) + pow(pf.y - p0.y, 2)) <= NBMETERS_FULLELLIPSE) {
+		// pm is the point in the middle of the point list. Therefore, it is p0's symetrical to the center 
+		pc.x = (pm.x + p0.x) / 2.0;
+		pc.y = (pm.y + p0.y) / 2.0;
+
+		// a is the distance between pf(pf.x, pf.y) and pc(pc.x, pc.y)
+		float a = sqrt(pow(pf.x - pc.x, 2) + pow(pf.x - pc.y, 2));
+		
+		// pm2 is the point at the first quarter of the point list (the middle of the first half of the list)
+		PXCPoint3DF32 pm2 = massCenterCoordinates[(int)(MAXFRAME / 4)];
+
+		// b is the distance between pm2(pm2.x, pm2.y) and pc(pc.x, pc.y)
+		float b = sqrt(pow(pm2.x - pc.x, 2) + pow(pm2.y - pc.y, 2));
+
+		// chose 2 points, different from p0, pm, pm2 and pf, to see if they respect the ellipse eq
+		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(MAXFRAME / 3)];
+		PXCPoint3DF32 p2 = massCenterCoordinates[(int)(2*MAXFRAME / 3)];
+		if ( ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE)
+		&& ((abs(pow(p2.x - pc.x, 2) / (a*a) + pow(p2.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE) ) {
+			cout << "FULL ELLIPSE" << endl;
+			*out |= (0b1 << 6);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	return false;
+}
