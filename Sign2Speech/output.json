@@ -5,9 +5,17 @@
 			"gesture": "0x00000006"
 		}
 	],
-	"lundi": [
+	"Douze": [
 		{
-			"word": "lundi",
+			"word": "tmp",
+			"gesture": "0x0000000f"
+		},
+		{
+			"word": "tmp2",
+			"gesture": "0x0002000f"
+		},
+		{
+			"word": "Douze",
 			"gesture": "0x0000000f"
 		}
 	],
@@ -41,7 +49,7 @@
 	],
 	"Etats-Unis": [
 		{
-			"word": "tmp",
+			"word": "",
 			"gesture": "0x00000000"
 		},
 		{

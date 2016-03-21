@@ -42,7 +42,8 @@ void ThreadDictionary::run() {
 		double seconds_since_start = difftime(time(0), start);
 		if (seconds_since_start > 5) { //TIMEOUT
 			string currentSymbol = d.refreshDictionary();
-			if ((currentSymbol != "") && (currentSymbol != "racine")) {
+			cout << "refresh dico" << endl;
+			if ((currentSymbol != "") && (currentSymbol != "0x1 : racine")) {
 				ThreadHandTools::webSock->send("{\"content\":\""+ currentSymbol +"\"}");
 				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
 					ThreadHandTools::webSock->poll();
@@ -57,7 +58,7 @@ void ThreadDictionary::run() {
 			vector<long>::iterator it = bufferRead->begin();
 			string currentSymbol = d.read(*it);
 			cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
-			if ((currentSymbol != "0x0 : Not final word") && (currentSymbol != "racine")) {
+			if ((currentSymbol != "0x0 : Not final word") && (currentSymbol != "0x1 : racine")) {
 				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");
 				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
 					ThreadHandTools::webSock->poll();

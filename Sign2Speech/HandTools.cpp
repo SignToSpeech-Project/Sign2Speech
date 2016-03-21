@@ -1,5 +1,8 @@
+#include <algorithm>
+
 #include "HandTools.h"
 #include "ThreadHandTools.h"
+
 
 
 
@@ -44,16 +47,87 @@ boolean HandTools::isGesture(uint32_t gesture, uint32_t ref, int distMax, int ma
 	return false;
 }
 
+
+vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
+	//Median 
+	std::sort(v.begin(), v.end());
+	int t = v.size();
+	float median;
+	if ((t % 2) == 0) {
+		int rank1 = (t / 2) - 1;
+		int rank2 = t / 2;
+		median = (v.at(rank1) + v.at(rank2)) / 2.0;
+	}
+	else {
+		int rank = t / 2;
+		median = v.at(rank);
+	}
+
+	//quartet1 and quartet3
+	float quartile1;
+	if ((t % 4) == 0) {
+		int rank1 = (t / 4.0) - 1.0;
+		int rank2 = t / 4.0;
+		quartile1 = (v.at(rank1) + v.at(rank2)) / 2.0;
+	}
+	else {
+		int rank = t / 4.0;
+		quartile1 = v.at(rank);
+	}
+
+	float quartile3;
+	if ((t % 4) == 0) {
+		int rank1 = (12 / (4.0 / 3.0)) - 1;
+		int rank2 = 12 / (4.0 / 3.0);
+		quartile3 = (v.at(rank1) + v.at(rank2)) / 2.0;
+	}
+	else {
+		int rank = t / (4.0 / 3.0);
+		quartile3 = v.at(rank);
+	}
+
+	//Interquartile range
+	float  interquartileRange = quartile3 - quartile1;
+
+	//inner fences
+	float innerFenceMin = quartile1 - 1.5 * interquartileRange;
+	float innerFenceSup = quartile3 + 1.5 * interquartileRange;
+
+	//outer fences
+	float outerFenceMin = quartile1 - 3 * interquartileRange;
+	float outerFenceSup = quartile3 + 3 * interquartileRange;
+
+	vector<uint32_t> result;
+
+	//removing strange values : use outerFence or innerFence, your wish. At this time we use outer fences
+	for (vector<uint32_t>::iterator it = v.begin(); it != v.end(); ++it)
+	{
+		if ((outerFenceMin <= (*it)) && ((*it) <= outerFenceSup))	result.push_back((*it));
+	}
+
+	return result;
+}
+
+
+
 uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[MAXFRAME][5]) {
 	uint32_t avg = 0x0;
 
 	// calculate the gesture average
 	for (int f = 0; f < 5; f++) {
 		uint32_t sumFold = 0;
+		vector<uint32_t> v;
 		for (int i = 0; i < MAXFRAME; i++) {
-			sumFold += handData[i][f].foldedness;
+			v.push_back(handData[i][f].foldedness);
 		}
-		sumFold /= MAXFRAME;
+
+		vector<uint32_t> vResult = this->removeOutValues(v);
+
+		for (vector<uint32_t>::iterator it = vResult.begin(); it != vResult.end(); ++it) {
+			sumFold += (*it);
+		}
+		sumFold /= vResult.size();
+
 		if (sumFold < 50) {
 			if (sumFold < 25) {
 				avg |= (0b00 << (2 * f));
