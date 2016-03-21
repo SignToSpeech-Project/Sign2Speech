@@ -49,6 +49,8 @@ public :
 
 	boolean isGesture(uint32_t gesture, uint32_t ref, int distMax, int maxApproximateFinger);
 
+	vector<uint32_t> removeOutValues(vector<uint32_t> v);
+	
 	uint32_t calculateAverage(PXCHandData::FingerData handData[MAXFRAME][5]);
 
 	long analyseGesture(PXCHandData::IHand *hand);
