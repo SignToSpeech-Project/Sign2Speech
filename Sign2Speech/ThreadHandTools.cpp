@@ -11,9 +11,10 @@
 
 WebSocket::pointer ThreadHandTools::webSock = NULL;
 
-ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, const char* av[]) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
+ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av, Sign2Speech *w) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 	argv = av;
 	argc = ac;
+	win = w;
 }
 
 void ThreadHandTools::handle_message(const std::string & message) {
@@ -39,9 +40,14 @@ void ThreadHandTools::run() {
 #endif
 
 	ThreadHandTools::webSock = WebSocket::from_url("ws://52.35.210.217/ws/subtitle/test");
+
+	if (ThreadHandTools::webSock != NULL) {
+		win->appendText("Unable to connect to the WebSocket server (52.35.210.217)");
+	}
+	else {
+		win->appendText("Connected to the WebSocket server (52.35.210.217)");
+	}
 	//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
-
-
 
 	HandTools h;
 
@@ -103,7 +109,7 @@ void ThreadHandTools::run() {
 	{
 		if (strcmp(argv[i], "-skeleton") == 0)
 		{
-			std::printf("-Skeleton Information Enabled-\n");
+			//std::printf("-Skeleton Information Enabled-\n");
 			g_skeleton = true;
 		}
 	}
@@ -126,7 +132,8 @@ void ThreadHandTools::run() {
 	// First Initializing the sense manager
 	if ((ct.getSenseManager())->Init() == PXC_STATUS_NO_ERROR)
 	{
-		std::printf("\nPXCSenseManager Initializing OK\n========================\n");
+		//std::printf("\nPXCSenseManager Initializing OK\n========================\n");
+		win->appendText("\nPXCSenseManager Initializing OK\n========================\n");
 
 		mProgram_on->lock();
 		// Acquiring frames from input device

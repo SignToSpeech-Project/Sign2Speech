@@ -47,7 +47,6 @@ boolean HandTools::isGesture(uint32_t gesture, uint32_t ref, int distMax, int ma
 	return false;
 }
 
-
 vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
 	//Median 
 	std::sort(v.begin(), v.end());
