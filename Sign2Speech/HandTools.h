@@ -3,17 +3,17 @@
 #ifndef DEF_HT
 #define DEF_HT
 
-#define MAXFRAME 79
+#define MAXFRAME 59
 #define DEBUG true
 #define NBMETERS_STATIC 0.01
-#define ERR_STRAIGHT_HOR 0.10
+#define ERR_STRAIGHT_HOR 0.08
 #define ERR_STRAIGHT_VER 0.08
 #define ERR_STRAIGHT 0.10
 #define VALID_HOR 0.03
 #define ERR_VERT 0.06
 #define VALID_VER 0.03
 #define ERR_HOR 0.06
-#define NBMETERS_FULLELLIPSE 0.05
+#define NBMETERS_FULLELLIPSE 0.06
 #define ERR_ELLIPSE 0.20
 
 using namespace std;

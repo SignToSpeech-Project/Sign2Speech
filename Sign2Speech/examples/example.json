@@ -50,5 +50,33 @@
       "word": "JeudiVendredi",
       "gesture": "0x3c"
     }
+  ],
+  "Africa": [
+    {
+      "word": "",
+      "gesture": "0x3FF" 
+    },
+    {
+      "word": "",
+      "gesture": "0x2155"
+    },
+    {
+      "word": "Africa",
+      "gesture": "0x0"
+    }
+  ],
+  "Etats-Unis": [
+    {
+      "word": "tmp",
+      "gesture": "0x0" 
+    },
+    {
+      "word": "",
+      "gesture": "0x800" 
+    },
+    {
+      "word": "Etats-Unis",
+      "gesture": "0x3FF"
+    }
   ]
 }
