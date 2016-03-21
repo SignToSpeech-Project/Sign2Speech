@@ -19,14 +19,9 @@
 using namespace std;
 using std::cout;
 
-
-
 class HandTools {
 
 private :
-	
-
-
 
 	std::wstring g_sequencePath;
 

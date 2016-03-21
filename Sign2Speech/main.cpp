@@ -22,8 +22,8 @@ vector<vector<pair<string, long>>> bufferWrite;
 bool attendre = true;
 
 //Thread managing the Dictionary
-void threadDico() {
-	ThreadDictionary d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite);
+void threadDico(Sign2Speech *win) {
+	ThreadDictionary d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite, win);
 	d.run();
 }
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	w.show();
 	
 	std::thread tHandTools(threadHandTool, argc, argv, &w);
-	std::thread tDico(threadDico);
+	std::thread tDico(threadDico, &w);
 
 	bool attendre = false;
 
