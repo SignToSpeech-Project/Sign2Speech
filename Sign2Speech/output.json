@@ -5,9 +5,17 @@
 			"gesture": "0x00000006"
 		}
 	],
-	"lundi": [
+	"Douze": [
 		{
-			"word": "lundi",
+			"word": "tmp",
+			"gesture": "0x0000000f"
+		},
+		{
+			"word": "tmp2",
+			"gesture": "0x0002000f"
+		},
+		{
+			"word": "Douze",
 			"gesture": "0x0000000f"
 		}
 	],
@@ -39,9 +47,31 @@
 			"gesture": "0x0000003c"
 		}
 	],
-	"samedi": [
+	"Etats-Unis": [
 		{
-			"word": "samedi",
+			"word": "",
+			"gesture": "0x00000000"
+		},
+		{
+			"word": "",
+			"gesture": "0x00000800"
+		},
+		{
+			"word": "Etats-Unis",
+			"gesture": "0x000003ff"
+		}
+	],
+	"Africa": [
+		{
+			"word": "",
+			"gesture": "0x000003ff"
+		},
+		{
+			"word": "",
+			"gesture": "0x00002155"
+		},
+		{
+			"word": "Africa",
 			"gesture": "0x00000000"
 		}
 	]

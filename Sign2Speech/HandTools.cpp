@@ -47,7 +47,6 @@ boolean HandTools::isGesture(uint32_t gesture, uint32_t ref, int distMax, int ma
 	return false;
 }
 
-
 vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
 	//Median 
 	std::sort(v.begin(), v.end());
@@ -99,10 +98,10 @@ vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
 
 	vector<uint32_t> result;
 
-	//removing strange values : use outerFence or innerFence, your wish. At this time we use inner fences
+	//removing strange values : use outerFence or innerFence, your wish. At this time we use outer fences
 	for (vector<uint32_t>::iterator it = v.begin(); it != v.end(); ++it)
 	{
-		if ((innerFenceMin <= (*it)) && ((*it) <= innerFenceSup))	result.push_back((*it));
+		if ((outerFenceMin <= (*it)) && ((*it) <= outerFenceSup))	result.push_back((*it));
 	}
 
 	return result;
@@ -455,7 +454,7 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 	// center coordinates pc(xc, yc)
 	PXCPoint3DF32 pc;
 
-	// NOT FULL ELLIPSE if the distance between first and last point > NBMETERS_FULLECLIPSE
+	// NOT FULL ELLIPSE if the distance between first and last point > NBMETERS_FULLELLIPSE
 	if (sqrt(pow(pf.x - p0.x, 2) + pow(pf.y - p0.y, 2)) > NBMETERS_FULLELLIPSE) {
 		pc.x = (pf.x + p0.x) / 2.0;
 		pc.y = (pf.y + p0.y) / 2.0;
@@ -467,7 +466,7 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 
 		// chose 1 point, different from p0, pm and pf, to see if it respects the ellipse eq
 		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(MAXFRAME / 3)];
-		if ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE) {
+		if ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) <= ERR_ELLIPSE) {
 			cout << "NOT FULL ELLIPSE" << endl;
 			*out |= (0b1 << 7);
 			return true;

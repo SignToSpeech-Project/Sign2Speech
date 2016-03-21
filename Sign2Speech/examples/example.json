@@ -50,5 +50,47 @@
       "word": "JeudiVendredi",
       "gesture": "0x3c"
     }
+  ],
+  "Africa": [
+    {
+      "word": "",
+      "gesture": "0x3FF" 
+    },
+    {
+      "word": "",
+      "gesture": "0x2155"
+    },
+    {
+      "word": "Africa",
+      "gesture": "0x0"
+    }
+  ],
+  "Etats-Unis": [
+    {
+      "word": "",
+      "gesture": "0x0" 
+    },
+    {
+      "word": "",
+      "gesture": "0x800" 
+    },
+    {
+      "word": "Etats-Unis",
+      "gesture": "0x3FF"
+    }
+  ],
+  "Douze": [
+    {
+      "word": "tmp",
+      "gesture": "0xF"
+    },
+    {
+      "word": "tmp2",
+      "gesture": "0x2000F"
+    },
+    {
+      "word": "Douze",
+      "gesture": "0xF"
+    }
   ]
 }
