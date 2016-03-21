@@ -120,7 +120,7 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		average |= movement << 10;
 
 		std::printf("[%ld]\t", frameCounter);
-		for (int b = 9; b >= 0; b--) {
+		for (int b = 17; b >= 0; b--) {
 			std::printf("%d", (average >> b) & 0x1);
 		}
 		std::printf("\n");
@@ -243,7 +243,7 @@ bool HandTools::isStatic(uint8_t *out) {
 		p0 = p_current;
 	}
 	cout << cpt << endl;
-	if (cpt > (float)MAXFRAME*0.95) {
+	if (cpt > (float)MAXFRAME*0.92) {
 		cout << "STATIQUE" << endl;
 		return true;
 	}
@@ -254,7 +254,7 @@ bool HandTools::isStatic(uint8_t *out) {
 
 // horizontal movement detected
 bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
-	if ((abs(p0.x - pf.x) > VALID_HOR) && (abs(p0.y - pf.y) <= VALID_HOR)) {
+	if ((abs(p0.x - pf.x) > VALID_HOR) && (abs(p0.y - pf.y) <= ERR_VERT)) {
 		cout << "STRAIGHT HORIZONTAL" << endl;
 		return true;
 	}
@@ -263,7 +263,7 @@ bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 p
 
 // vertical movement detected
 bool HandTools::isVertical(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
-	if ((abs(p0.y - pf.y) > VALID_VER) && (abs(p0.x - pf.x) <= VALID_VER)) {
+	if ((abs(p0.y - pf.y) > VALID_VER) && (abs(p0.x - pf.x) <= ERR_HOR)) {
 		cout << "STRAIGHT VERTICAL" << endl;
 		return true;
 	}
@@ -283,13 +283,56 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 	}
 	b = p0.y - a*p0.x;
 
-	// does it respect the equation of a straight line?
-	if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT) {
-		// is it horizontal?
-		if (isHorizontal(p0, pm, pf)) {
-			// which direction: left or right?
+	// does it respect the equation of a straight line & is it horizontal?
+	if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT_HOR && isHorizontal(p0, pm, pf)) {
+		// which direction: left or right?
+		if (p0.x - pf.x > 0) {
+			cout << "    RIGHT" << endl;
+			*out |= 0b1;
+			for (int b = 7; b >= 0; b--) {
+				std::printf("%d", (*out >> b) & 0x1);
+			}
+			std::printf("\n");
+			return true;
+		}
+		else {
+			cout << "    LEFT" << endl;
+			*out |= (0b1 << 1);
+			for (int b = 7; b >= 0; b--) {
+				std::printf("%d", (*out >> b) & 0x1);
+			}
+			std::printf("\n");
+			return true;
+		}
+	}
+	else if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT_VER && isVertical(p0, pm, pf)) {
+		// which direction: top or bottom?
+		if (p0.y - pf.y > 0) {
+			cout << "    BOTTOM" << endl;
+			*out |= (0b1 << 3);
+			for (int b = 7; b >= 0; b--) {
+				std::printf("%d", (*out >> b) & 0x1);
+			}
+			std::printf("\n");
+			return true;
+		}
+		else {
+			cout << "    TOP" << endl;
+			*out |= (0b1 << 2);
+			for (int b = 7; b >= 0; b--) {
+				std::printf("%d", (*out >> b) & 0x1);
+			}
+			std::printf("\n");
+			return true;
+		}
+	}
+	// not horizontal nor vertical: it's a normal straight line!
+	else if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT) {
+		// if p0.y < pf.y -> to the top
+		if (p0.y < pf.y) {
+			*out |= (0b1 << 2);
 			if (p0.x - pf.x > 0) {
-				cout << "    RIGHT" << endl;
+				cout << "\t\tNORMAL TOP RIGHT" << endl;
 				*out |= 0b1;
 				for (int b = 7; b >= 0; b--) {
 					std::printf("%d", (*out >> b) & 0x1);
@@ -298,7 +341,7 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 				return true;
 			}
 			else {
-				cout << "    LEFT" << endl;
+				cout << "\t\tNORMAL TOP LEFT" << endl;
 				*out |= (0b1 << 1);
 				for (int b = 7; b >= 0; b--) {
 					std::printf("%d", (*out >> b) & 0x1);
@@ -307,12 +350,12 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 				return true;
 			}
 		}
-		// is it vertical?
-		else if (isVertical(p0, pm, pf)) {
-			// which direction: top or bottom?
-			if (p0.y - pf.y > 0) {
-				cout << "    BOTTOM" << endl;
-				*out |= (0b1 << 3);
+		// if p0.y > pf.y -> to the bottom
+		else if (p0.y > pf.y) {
+			*out |= (0b1 << 3);
+			if (p0.x - pf.x > 0) {
+				cout << "\t\tNORMAL BOTTOM RIGHT" << endl;
+				*out |= 0b1;
 				for (int b = 7; b >= 0; b--) {
 					std::printf("%d", (*out >> b) & 0x1);
 				}
@@ -320,8 +363,8 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 				return true;
 			}
 			else {
-				cout << "    TOP" << endl;
-				*out |= (0b1 << 2);
+				cout << "\t\tNORMAL BOTTOM LEFT" << endl;
+				*out |= (0b1 << 1);
 				for (int b = 7; b >= 0; b--) {
 					std::printf("%d", (*out >> b) & 0x1);
 				}
@@ -329,53 +372,6 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 				return true;
 			}
 		}
-		// not horizontal nor vertical: it's a normal straight line!
-		else {
-			// if p0.y < pf.y -> to the top
-			if (p0.y < pf.y) {
-				*out |= (0b1 << 2);
-				if (p0.x - pf.x > 0) {
-					cout << "\t\tNORMAL TOP RIGHT" << endl;
-					*out |= 0b1;
-					for (int b = 7; b >= 0; b--) {
-						std::printf("%d", (*out >> b) & 0x1);
-					}
-					std::printf("\n");
-					return true;
-				}
-				else {
-					cout << "\t\tNORMAL TOP LEFT" << endl;
-					*out |= (0b1 << 1);
-					for (int b = 7; b >= 0; b--) {
-						std::printf("%d", (*out >> b) & 0x1);
-					}
-					std::printf("\n");
-					return true;
-				}
-			}
-			// if p0.y > pf.y -> to the bottom
-			else if (p0.y > pf.y) {
-				*out |= (0b1 << 3);
-				if (p0.x - pf.x > 0) {
-					cout << "\t\tNORMAL BOTTOM RIGHT" << endl;
-					*out |= 0b1;
-					for (int b = 7; b >= 0; b--) {
-						std::printf("%d", (*out >> b) & 0x1);
-					}
-					std::printf("\n");
-					return true;
-				}
-				else {
-					cout << "\t\tNORMAL BOTTOM LEFT" << endl;
-					*out |= (0b1 << 1);
-					for (int b = 7; b >= 0; b--) {
-						std::printf("%d", (*out >> b) & 0x1);
-					}
-					std::printf("\n");
-					return true;
-				}
-			}
-		} // end else it's a normal straight line
 	} // end if "it respects the equation of a straight line"
 	else {
 		return false;

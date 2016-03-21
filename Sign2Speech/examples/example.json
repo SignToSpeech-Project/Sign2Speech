@@ -1,24 +1,4 @@
 {
-  "saucisson": [
-     {
-          "word": "saucisson",
-          "gesture": "0x7"
-      }
-  ],
-  "maison": [
-      {
-          "word": "maison1",
-          "gesture": "0x2"
-      },
-      {
-          "word": "",
-          "gesture": "0x4"
-      },
-      {
-          "word": "maison",
-          "gesture": "0x5"
-      }
-  ],
  "oiseau": [
       {
           "word": "oiseau",
@@ -28,7 +8,7 @@
   "lundi": [
     {
       "word": "lundi",
-      "gesture": "0xFFFFF"
+      "gesture": "0xF"
     }
   ],
   "mardi": [

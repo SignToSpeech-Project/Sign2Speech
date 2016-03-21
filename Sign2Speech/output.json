@@ -1,8 +1,48 @@
 {
-	"saucisson5": [
+	"oiseau": [
 		{
-			"word": "saucisson5",
-			"gesture": "0x000001af"
+			"word": "oiseau",
+			"gesture": "0x00000006"
+		}
+	],
+	"lundi": [
+		{
+			"word": "lundi",
+			"gesture": "0x0000000f"
+		}
+	],
+	"mardi": [
+		{
+			"word": "mardi",
+			"gesture": "0x00000003"
+		}
+	],
+	"mercredi": [
+		{
+			"word": "mercredi",
+			"gesture": "0x00000155"
+		}
+	],
+	"JeudiVendredi": [
+		{
+			"word": "jeudi",
+			"gesture": "0x00000303"
+		},
+		{
+			"word": "JeudiVendredi",
+			"gesture": "0x0000003c"
+		}
+	],
+	"vendredi": [
+		{
+			"word": "vendredi",
+			"gesture": "0x0000003c"
+		}
+	],
+	"samedi": [
+		{
+			"word": "samedi",
+			"gesture": "0x00000000"
 		}
 	]
 }

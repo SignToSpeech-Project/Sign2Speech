@@ -43,7 +43,7 @@ string Dictionary::read(long symbol) {
 	if (n != NULL) {
 		if (n->hasChildrens()) {
 			currentNode = n;
-			return "0x0 : Not final word";
+			return "0x0 : Not final word, signification temp : "+ n->getWord();
 		}
 		else { //If the current word is a final word
 			string word = n->getWord();
