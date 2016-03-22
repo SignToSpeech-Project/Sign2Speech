@@ -22,8 +22,10 @@ private :
 	int argc;
 	char** argv;
 	Sign2Speech *win;
+
+	void writeMessage(QString string);
 public:
-	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av, Sign2Speech *win);
+	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, mutex *mSW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av, Sign2Speech *win);
 
 	static WebSocket::pointer webSock;
 

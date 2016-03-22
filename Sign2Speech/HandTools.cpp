@@ -4,7 +4,16 @@
 #include "ThreadHandTools.h"
 
 
+HandTools::HandTools(Sign2Speech *w, mutex *mSW) {
+	win = w;
+	mStdW = mSW;
+}
 
+void HandTools::writeMessage(QString string) {
+	mStdW->lock();
+	win->appendText(string);
+	mStdW->unlock();
+}
 
 int HandTools::calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step) {
 	int dist = 0;
@@ -192,7 +201,9 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		uint8_t movement = analyseMovement();
 		average |= movement << 10;
 
-		std::printf("[%ld]\t", frameCounter);
+		QString out;
+		out.sprintf("[%ld]\t", frameCounter);
+		writeMessage(out);
 		for (int b = 17; b >= 0; b--) {
 			std::printf("%d", (average >> b) & 0x1);
 		}
@@ -238,40 +249,6 @@ void HandTools::printFold(PXCHandData::IHand *hand) {
 		}
 	}
 }
-/*
-bool HandTools::CtrlHandler(DWORD fdwCtrlType, bool g_stop, PXCSenseManager *g_senseManager, PXCSession *g_session)
-{
-	switch (fdwCtrlType)
-	{
-		// Handle the CTRL-C signal. 
-	case CTRL_C_EVENT:
-
-		// confirm that the user wants to exit. 
-	case CTRL_CLOSE_EVENT:
-		g_stop = true;
-		Sleep(1000);
-		releaseAll(g_senseManager, g_session);
-		return(TRUE);
-
-	default:
-		return FALSE;
-	}
-}
-
-void HandTools::releaseAll(PXCSenseManager *g_senseManager, PXCSession *g_session)
-{
-	if (g_senseManager)
-	{
-		g_senseManager->Close();
-		g_senseManager->Release();
-		g_senseManager = NULL;
-	}
-	if (g_session)
-	{
-		g_session->Release();
-		g_session = NULL;
-	}
-}*/
 
 
 /* Analyse the movement of the gesture (straight, circular or elliptic) from all the points that compose the gesture */
