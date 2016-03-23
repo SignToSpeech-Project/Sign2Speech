@@ -21,9 +21,9 @@ void ThreadDictionary::run() {
 	vector< vector< pair<string, long> > > res;
 
 	// parse the json file
-	writeMessage("Parsing Json file...");
+	printf("Parsing Json file...\n");
 	res = p.ReadJsonFile();
-	writeMessage("Parsing > OK");
+	printf("Parsing > OK\n");
 	//
 	// insert all the vectors of pairs in the dictionary
 	for (vector<vector<pair<string, long>>>::iterator it = res.begin(); it != res.end(); ++it) {
@@ -67,7 +67,8 @@ void ThreadDictionary::run() {
 			//cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
 			string out = "Reading : " + (*it);
 			out += " Signification : " + currentSymbol;
-			writeMessage((char*)out.c_str());
+			out += "\n";
+			printf((char*)out.c_str());
 
 			if ((currentSymbol != "0x0 : Not final word") && (currentSymbol != "0x1 : racine")) {
 				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");

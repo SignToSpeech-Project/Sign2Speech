@@ -18,11 +18,9 @@ public:
 	void appendText(QString text);
 	void closeEvent(QCloseEvent *event);
 	void bindProgramState(mutex *mP, bool *pg);
+	void startThreads(int argc, char **argv);
 private:
 	Ui::Sign2SpeechClass ui;
-
-	mutex *mProgram_on;
-	bool *program_on;
 };
 
 #endif // SIGN2SPEECH_H

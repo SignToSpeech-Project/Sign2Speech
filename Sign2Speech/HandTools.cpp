@@ -9,9 +9,15 @@ HandTools::HandTools(Sign2Speech *w, mutex *mSW) {
 	mStdW = mSW;
 }
 
+void HandTools::printBinary(uint32_t a, int nbBits) {
+	for (int b = nbBits; b >= 0; b--) {
+		printf("%d", (a >> b) & 0x1);
+	}
+}
+
 void HandTools::writeMessage(QString string) {
 	mStdW->lock();
-	win->appendText(string);
+	//win->appendText(string);
 	mStdW->unlock();
 }
 
@@ -201,13 +207,10 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		uint8_t movement = analyseMovement();
 		average |= movement << 10;
 
-		QString out;
-		out.sprintf("[%ld]\t", frameCounter);
-		writeMessage(out);
-		for (int b = 17; b >= 0; b--) {
-			std::printf("%d", (average >> b) & 0x1);
-		}
-		std::printf("\n");
+		printf("[%ld]\t", frameCounter);
+		printBinary(average, 17);
+		printf("\n");
+		//std::printf("\n");
 
 		/*if (isGesture(average, fist, 1, 2)) {
 			std::printf("[%ld]\t\t %s FIST\n", frameCounter, sideStr.c_str());
@@ -245,7 +248,8 @@ void HandTools::printFold(PXCHandData::IHand *hand) {
 	PXCHandData::FingerData fingerData;
 	for (int f = 0; f < 5; f++) {
 		if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
-			std::printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
+			//std::printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
+			printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
 		}
 	}
 }
@@ -292,9 +296,11 @@ bool HandTools::isStatic(uint8_t *out) {
 		}
 		p0 = p_current;
 	}
-	cout << cpt << endl;
+	//cout << cpt << endl;
+	printf(cpt + "\n");
 	if (cpt > (float)MAXFRAME*0.92) {
-		cout << "STATIQUE" << endl;
+		//cout << "STATIQUE" << endl;
+		printf("STATIQUE\n");
 		return true;
 	}
 	else {
@@ -305,7 +311,8 @@ bool HandTools::isStatic(uint8_t *out) {
 // horizontal movement detected
 bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
 	if ((abs(p0.x - pf.x) > VALID_HOR) && (abs(p0.y - pf.y) <= ERR_VERT)) {
-		cout << "STRAIGHT HORIZONTAL" << endl;
+		//cout << "STRAIGHT HORIZONTAL" << endl;
+		printf("STRAIGHT HORIZONTAL\n");
 		return true;
 	}
 	return false;
@@ -314,7 +321,8 @@ bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 p
 // vertical movement detected
 bool HandTools::isVertical(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
 	if ((abs(p0.y - pf.y) > VALID_VER) && (abs(p0.x - pf.x) <= ERR_HOR)) {
-		cout << "STRAIGHT VERTICAL" << endl;
+		//cout << "STRAIGHT VERTICAL" << endl;
+		printf("STRAIGHT VERTICAL\n");
 		return true;
 	}
 	return false;
@@ -337,42 +345,42 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 	if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT_HOR && isHorizontal(p0, pm, pf)) {
 		// which direction: left or right?
 		if (p0.x - pf.x > 0) {
-			cout << "    RIGHT" << endl;
+			//cout << "    RIGHT" << endl;
+			printf("\tRIGHT\n");
 			*out |= 0b1;
-			for (int b = 7; b >= 0; b--) {
-				std::printf("%d", (*out >> b) & 0x1);
-			}
-			std::printf("\n");
+			printBinary(*out, 7);
+			//std::printf("\n");
+			printf("\n");
 			return true;
 		}
 		else {
-			cout << "    LEFT" << endl;
+			//cout << "    LEFT" << endl;
+			printf("\tLEFT\n");
 			*out |= (0b1 << 1);
-			for (int b = 7; b >= 0; b--) {
-				std::printf("%d", (*out >> b) & 0x1);
-			}
-			std::printf("\n");
+			printBinary(*out, 7);
+			//std::printf("\n");
+			printf("\n");
 			return true;
 		}
 	}
 	else if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT_VER && isVertical(p0, pm, pf)) {
 		// which direction: top or bottom?
 		if (p0.y - pf.y > 0) {
-			cout << "    BOTTOM" << endl;
+			//cout << "    BOTTOM" << endl;
+			printf("\tBOTTOM\n");
 			*out |= (0b1 << 3);
-			for (int b = 7; b >= 0; b--) {
-				std::printf("%d", (*out >> b) & 0x1);
-			}
-			std::printf("\n");
+			printBinary(*out, 7);
+			//std::printf("\n");
+			printf("\n");
 			return true;
 		}
 		else {
-			cout << "    TOP" << endl;
+			//cout << "    TOP" << endl;
+			printf("\tTOP\n");
 			*out |= (0b1 << 2);
-			for (int b = 7; b >= 0; b--) {
-				std::printf("%d", (*out >> b) & 0x1);
-			}
-			std::printf("\n");
+			printBinary(*out, 7);
+			//std::printf("\n");
+			printf("\n");
 			return true;
 		}
 	}
@@ -382,21 +390,21 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		if (p0.y < pf.y) {
 			*out |= (0b1 << 2);
 			if (p0.x - pf.x > 0) {
-				cout << "\t\tNORMAL TOP RIGHT" << endl;
+				//cout << "\t\tNORMAL TOP RIGHT" << endl;
+				printf("\tNORMAL TOP RIGHT\n");
 				*out |= 0b1;
-				for (int b = 7; b >= 0; b--) {
-					std::printf("%d", (*out >> b) & 0x1);
-				}
-				std::printf("\n");
+				printBinary(*out, 7);
+				//std::printf("\n");
+				printf("\n");
 				return true;
 			}
 			else {
-				cout << "\t\tNORMAL TOP LEFT" << endl;
+				//cout << "\t\tNORMAL TOP LEFT" << endl;
+				printf("\tNORMAL TOP LEFT\n");
 				*out |= (0b1 << 1);
-				for (int b = 7; b >= 0; b--) {
-					std::printf("%d", (*out >> b) & 0x1);
-				}
-				std::printf("\n");
+				printBinary(*out, 7);
+				//std::printf("\n");
+				printf("\n");
 				return true;
 			}
 		}
@@ -404,21 +412,21 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		else if (p0.y > pf.y) {
 			*out |= (0b1 << 3);
 			if (p0.x - pf.x > 0) {
-				cout << "\t\tNORMAL BOTTOM RIGHT" << endl;
+				//cout << "\t\tNORMAL BOTTOM RIGHT" << endl;
+				printf("\tNORMAL BOTTOM RIGHT\n");
 				*out |= 0b1;
-				for (int b = 7; b >= 0; b--) {
-					std::printf("%d", (*out >> b) & 0x1);
-				}
-				std::printf("\n");
+				printBinary(*out, 7);
+				//std::printf("\n");
+				printf("\n");
 				return true;
 			}
 			else {
-				cout << "\t\tNORMAL BOTTOM LEFT" << endl;
+				//cout << "\t\tNORMAL BOTTOM LEFT" << endl;
+				printf("\tNORMAL BOTTOM LEFT\n");
 				*out |= (0b1 << 1);
-				for (int b = 7; b >= 0; b--) {
-					std::printf("%d", (*out >> b) & 0x1);
-				}
-				std::printf("\n");
+				printBinary(*out, 7);
+				//std::printf("\n");
+				printf("\n");
 				return true;
 			}
 		}
@@ -444,7 +452,8 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		// chose 1 point, different from p0, pm and pf, to see if it respects the ellipse eq
 		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(MAXFRAME / 3)];
 		if ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) <= ERR_ELLIPSE) {
-			cout << "NOT FULL ELLIPSE" << endl;
+			//cout << "NOT FULL ELLIPSE" << endl;
+			printf("NOT FULL ELLIPSE\n");
 			*out |= (0b1 << 7);
 			return true;
 		}
@@ -473,7 +482,8 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		PXCPoint3DF32 p2 = massCenterCoordinates[(int)(2*MAXFRAME / 3)];
 		if ( ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE)
 		&& ((abs(pow(p2.x - pc.x, 2) / (a*a) + pow(p2.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE) ) {
-			cout << "FULL ELLIPSE" << endl;
+			//cout << "FULL ELLIPSE" << endl;
+			printf("FULL ELLIPSE\n");
 			*out |= (0b1 << 6);
 			return true;
 		}

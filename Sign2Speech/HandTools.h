@@ -45,6 +45,7 @@ private :
 	uint32_t metal = 0b1000001000;
 
 	void writeMessage(QString string);
+	void printBinary(uint32_t a, int nbBits);
 
 public :
 
