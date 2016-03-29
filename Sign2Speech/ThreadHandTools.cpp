@@ -2,23 +2,16 @@
 
 WebSocket::pointer ThreadHandTools::webSock = NULL;
 
-ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, mutex *mSW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av, Sign2Speech *w) : ThreadApp(mP, mBR, mBW, mSW, pg, bR, bW) {
+ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 	argv = av;
 	argc = ac;
-	win = w;
-}
-
-void ThreadHandTools::writeMessage(QString string) {
-	mStdW->lock();
-	win->appendText(string);
-	mStdW->unlock();
 }
 
 void ThreadHandTools::handle_message(const std::string & message) {
 	printf(">>> %s\n", message.c_str());
-	if (message == "world") {
-		ThreadHandTools::webSock->close();
-	}
+	//if (message == "world") {
+	//	ThreadHandTools::webSock->close();
+	//}
 }
 
 void ThreadHandTools::run() {
@@ -42,7 +35,7 @@ void ThreadHandTools::run() {
 		printf("Connected to the WebSocket server (52.35.210.217)\n");
 		//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
-		HandTools h(win, mStdW);
+		HandTools h;
 
 		if (argc < 2)
 		{

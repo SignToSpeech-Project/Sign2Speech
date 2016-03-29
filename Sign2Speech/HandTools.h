@@ -1,6 +1,5 @@
 #include <mutex>
 #include "stdafx.h"
-#include "sign2speech.h"
 
 #ifndef DEF_HT
 #define DEF_HT
@@ -25,11 +24,7 @@ class HandTools {
 
 private :
 
-	Sign2Speech *win;
-
 	std::wstring g_sequencePath;
-
-	mutex *mStdW;
 
 	int nbReadFrameRight = 0;
 	int nbReadFrameLeft = 0;
@@ -44,12 +39,9 @@ private :
 	uint32_t victory = 0b101000;
 	uint32_t metal = 0b1000001000;
 
-	void writeMessage(QString string);
 	void printBinary(uint32_t a, int nbBits);
 
 public :
-
-	HandTools(Sign2Speech *w, mutex *mSW);
 
 	int calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step);
 

@@ -1,14 +1,7 @@
 #include "ThreadDictionary.h"
 #include "ThreadHandTools.h"
 
-ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, mutex *mSW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, Sign2Speech *w) : ThreadApp(mP, mBR, mBW, mSW, pg, bR, bW) {
-	win = w;
-}
-
-void ThreadDictionary::writeMessage(QString string) {
-	mStdW->lock();
-	win->appendText(string);
-	mStdW->unlock();
+ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 }
 
 void ThreadDictionary::run() {
@@ -64,11 +57,7 @@ void ThreadDictionary::run() {
 		if (bufferRead->size() != 0) { //Get CurrentSymbol
 			vector<long>::iterator it = bufferRead->begin();
 			string currentSymbol = d.read(*it);
-			//cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
-			string out = "Reading : " + (*it);
-			out += " Signification : " + currentSymbol;
-			out += "\n";
-			printf((char*)out.c_str());
+			cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
 
 			if ((currentSymbol != "0x0 : Not final word") && (currentSymbol != "0x1 : racine")) {
 				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");

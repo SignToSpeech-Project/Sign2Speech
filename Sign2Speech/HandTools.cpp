@@ -3,22 +3,10 @@
 #include "HandTools.h"
 #include "ThreadHandTools.h"
 
-
-HandTools::HandTools(Sign2Speech *w, mutex *mSW) {
-	win = w;
-	mStdW = mSW;
-}
-
 void HandTools::printBinary(uint32_t a, int nbBits) {
 	for (int b = nbBits; b >= 0; b--) {
 		printf("%d", (a >> b) & 0x1);
 	}
-}
-
-void HandTools::writeMessage(QString string) {
-	mStdW->lock();
-	//win->appendText(string);
-	mStdW->unlock();
 }
 
 int HandTools::calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step) {
@@ -297,10 +285,9 @@ bool HandTools::isStatic(uint8_t *out) {
 		p0 = p_current;
 	}
 	//cout << cpt << endl;
-	printf(cpt + "\n");
 	if (cpt > (float)MAXFRAME*0.92) {
-		//cout << "STATIQUE" << endl;
-		printf("STATIQUE\n");
+		cout << "STATIQUE" << endl;
+		//printf("STATIQUE\n");
 		return true;
 	}
 	else {
@@ -311,8 +298,8 @@ bool HandTools::isStatic(uint8_t *out) {
 // horizontal movement detected
 bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
 	if ((abs(p0.x - pf.x) > VALID_HOR) && (abs(p0.y - pf.y) <= ERR_VERT)) {
-		//cout << "STRAIGHT HORIZONTAL" << endl;
-		printf("STRAIGHT HORIZONTAL\n");
+		cout << "STRAIGHT HORIZONTAL" << endl;
+		//printf("STRAIGHT HORIZONTAL\n");
 		return true;
 	}
 	return false;
@@ -321,8 +308,8 @@ bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 p
 // vertical movement detected
 bool HandTools::isVertical(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
 	if ((abs(p0.y - pf.y) > VALID_VER) && (abs(p0.x - pf.x) <= ERR_HOR)) {
-		//cout << "STRAIGHT VERTICAL" << endl;
-		printf("STRAIGHT VERTICAL\n");
+		cout << "STRAIGHT VERTICAL" << endl;
+		//printf("STRAIGHT VERTICAL\n");
 		return true;
 	}
 	return false;
