@@ -422,6 +422,7 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		return false;
 	}
 }
+
 bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out) {
 	// center coordinates pc(xc, yc)
 	PXCPoint3DF32 pc;
@@ -479,4 +480,61 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		}
 	}
 	return false;
+}
+
+/***********************************************/
+/* ************ Automatic learning *********** */
+/***********************************************/
+
+uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds) {
+
+	// Hand vector. Will contain the data of each finger (5) of the hand
+	vector<Hand> handVector;
+	int nbReadFrame = 0;
+	uint32_t avg;
+	time_t start = time(0);
+
+	// capture for nbSeconds seconds
+	while (difftime(start, time(0)) <= nbSeconds) {
+		// add a new entry into the table
+		PXCHandData::FingerData fingerData;
+		// declare a new hand
+		Hand h;
+
+		for (int f = 0; f < 5; f++) {
+			if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
+				// fill the hand struct
+				switch (f){
+				case 1:
+					h.f1 = fingerData;
+					break;
+				case 2:
+					h.f2 = fingerData;
+					break;
+				case 3:
+					h.f3 = fingerData;
+					break;
+				case 4:
+					h.f4 = fingerData;
+					break;
+				case 5:
+					h.f5 = fingerData;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		//Ajouter la main au vecteur
+		handVector.push_back(h);
+	}
+
+	//Declarer handdata
+	const int vecSize = handVector.size();
+	PXCHandData::FingerData handData[vecSize][5];
+
+	//tu ranges chaque main du vecteur dans une case du tableau hand date (boucle for)
+	avg = calculateAverage(handData);
+
+	return avg;
 }
