@@ -1,8 +1,7 @@
 #include "ThreadDictionary.h"
 #include "ThreadHandTools.h"
 
-ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, Sign2Speech *w) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
-	win = w;
+ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 }
 
 void ThreadDictionary::run() {
@@ -15,9 +14,9 @@ void ThreadDictionary::run() {
 	vector< vector< pair<string, long> > > res;
 
 	// parse the json file
-	win->appendText("Parsing Json file...");
+	printf("Parsing Json file...\n");
 	res = p.ReadJsonFile();
-	win->appendText("Parsing > OK");
+	printf("Parsing > OK\n");
 	//
 	// insert all the vectors of pairs in the dictionary
 	for (vector<vector<pair<string, long>>>::iterator it = res.begin(); it != res.end(); ++it) {
@@ -58,10 +57,8 @@ void ThreadDictionary::run() {
 		if (bufferRead->size() != 0) { //Get CurrentSymbol
 			vector<long>::iterator it = bufferRead->begin();
 			string currentSymbol = d.read(*it);
-			//cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
-			string out = "Reading : " + (*it);
-			out += " Signification : " + currentSymbol;
-			win->appendText((char*)out.c_str());
+			cout << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
+
 			if ((currentSymbol != "0x0 : Not final word") && (currentSymbol != "0x1 : racine")) {
 				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");
 				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {

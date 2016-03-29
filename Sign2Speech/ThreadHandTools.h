@@ -4,7 +4,6 @@
 #include "ConsoleTools.h"
 #include "stdafx.h"
 #include "easywsclient.hpp"
-#include "sign2speech.h"
 
 using easywsclient::WebSocket;
 
@@ -21,9 +20,8 @@ private :
 
 	int argc;
 	char** argv;
-	Sign2Speech *win;
 public:
-	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av, Sign2Speech *win);
+	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av);
 
 	static WebSocket::pointer webSock;
 

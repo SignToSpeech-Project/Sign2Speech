@@ -2,17 +2,16 @@
 
 WebSocket::pointer ThreadHandTools::webSock = NULL;
 
-ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av, Sign2Speech *w) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
+ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 	argv = av;
 	argc = ac;
-	win = w;
 }
 
 void ThreadHandTools::handle_message(const std::string & message) {
 	printf(">>> %s\n", message.c_str());
-	if (message == "world") {
-		ThreadHandTools::webSock->close();
-	}
+	//if (message == "world") {
+	//	ThreadHandTools::webSock->close();
+	//}
 }
 
 void ThreadHandTools::run() {
@@ -25,7 +24,7 @@ void ThreadHandTools::run() {
 
 	rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (rc) {
-		win->appendText("WSAStartup Failed.");
+		printf("WSAStartup Failed.\n");
 		return;
 	}
 #endif
@@ -33,7 +32,7 @@ void ThreadHandTools::run() {
 	ThreadHandTools::webSock = WebSocket::from_url("ws://52.35.210.217/ws/subtitle/test");
 
 	if (ThreadHandTools::webSock != NULL) {
-		win->appendText("Connected to the WebSocket server (52.35.210.217)");
+		printf("Connected to the WebSocket server (52.35.210.217)\n");
 		//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 		HandTools h;
@@ -48,7 +47,7 @@ void ThreadHandTools::run() {
 		ct.setSession(PXCSession::CreateInstance());
 		if (!(ct.getSession()))
 		{
-			win->appendText("Failed Creating PXCSession");
+			printf("Failed Creating PXCSession\n");
 			return;
 		}
 
@@ -56,14 +55,14 @@ void ThreadHandTools::run() {
 		if (!(ct.getSenseManager()))
 		{
 			ct.releaseAll(); //TODO : Fonction dans HandTools.cpp . Attention, il faut lui passer des paramètres maintenant. A discuter
-			win->appendText("Failed Creating PXCSenseManager");
+			printf("Failed Creating PXCSenseManager\n");
 			return;
 		}
 
 		if ((ct.getSenseManager())->EnableHand() != PXC_STATUS_NO_ERROR)
 		{
 			ct.releaseAll();
-			win->appendText("Failed Enabling Hand Module");
+			printf("Failed Enabling Hand Module\n");
 			return;
 		}
 
@@ -71,7 +70,7 @@ void ThreadHandTools::run() {
 		if (!g_handModule)
 		{
 			ct.releaseAll();
-			win->appendText("Failed Creating PXCHandModule");
+			printf("Failed Creating PXCHandModule\n");
 			return;
 		}
 
@@ -79,7 +78,7 @@ void ThreadHandTools::run() {
 		if (!g_handDataOutput)
 		{
 			ct.releaseAll();
-			win->appendText("Failed Creating PXCHandData");
+			printf("Failed Creating PXCHandData\n");
 			return;
 		}
 
@@ -87,7 +86,7 @@ void ThreadHandTools::run() {
 		if (!g_handConfiguration)
 		{
 			ct.releaseAll();
-			win->appendText("Failed Creating PXCHandConfiguration");
+			printf("Failed Creating PXCHandConfiguration\n");
 			return;
 		}
 
@@ -119,7 +118,7 @@ void ThreadHandTools::run() {
 		// First Initializing the sense manager
 		if ((ct.getSenseManager())->Init() == PXC_STATUS_NO_ERROR)
 		{
-			win->appendText("\nPXCSenseManager Initializing OK\n========================\n");
+			printf("\nPXCSenseManager Initializing OK\n========================\n");
 
 			mProgram_on->lock();
 			// Acquiring frames from input device
@@ -162,12 +161,12 @@ void ThreadHandTools::run() {
 		else
 		{
 			ct.releaseAll();
-			win->appendText("Failed Initializing PXCSenseManager");
+			printf("Failed Initializing PXCSenseManager\n");
 			return;
 		}
 	}
 	else {
-		win->appendText("Unable to connect to the WebSocket server (52.35.210.217)");
+		printf("Unable to connect to the WebSocket server (52.35.210.217)\n");
 	}
 
 	ct.releaseAll();

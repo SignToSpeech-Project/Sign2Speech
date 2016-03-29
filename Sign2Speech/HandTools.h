@@ -1,3 +1,4 @@
+#include <mutex>
 #include "stdafx.h"
 
 #ifndef DEF_HT
@@ -45,6 +46,8 @@ private :
 	uint32_t fist = 0b0;
 	uint32_t victory = 0b101000;
 	uint32_t metal = 0b1000001000;
+
+	void printBinary(uint32_t a, int nbBits);
 
 public :
 
