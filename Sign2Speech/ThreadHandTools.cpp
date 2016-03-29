@@ -2,9 +2,9 @@
 
 WebSocket::pointer ThreadHandTools::webSock = NULL;
 
-ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
-	argv = av;
-	argc = ac;
+ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
+	address = ad;
+	room = r;
 }
 
 void ThreadHandTools::handle_message(const std::string & message) {
@@ -28,8 +28,13 @@ void ThreadHandTools::run() {
 		return;
 	}
 #endif
-
-	ThreadHandTools::webSock = WebSocket::from_url("ws://52.35.210.217/ws/subtitle/test");
+	string webSocketAddress = "ws://";
+	webSocketAddress += address;
+	webSocketAddress += "/ws/subtitle/";
+	webSocketAddress += room;
+	
+	ThreadHandTools::webSock = WebSocket::from_url(webSocketAddress);
+	//ThreadHandTools::webSock = WebSocket::from_url("ws://52.35.210.217/ws/subtitle/test");
 
 	if (ThreadHandTools::webSock != NULL) {
 		printf("Connected to the WebSocket server (52.35.210.217)\n");
@@ -37,11 +42,11 @@ void ThreadHandTools::run() {
 
 		HandTools h;
 
-		if (argc < 2)
+		/*if (argc < 2)
 		{
 			Definitions::WriteHelpMessage();
 			return;
-		}
+		}*/
 
 		// Setup
 		ct.setSession(PXCSession::CreateInstance());
@@ -91,14 +96,18 @@ void ThreadHandTools::run() {
 		}
 
 		// Iterating input parameters
-		for (int i = 1; i < argc; i++)
-		{
-			if (strcmp(argv[i], "-skeleton") == 0)
-			{
-				//std::printf("-Skeleton Information Enabled-\n");
-				g_skeleton = true;
-			}
-		}
+		//for (int i = 1; i < argc; i++)
+		//{
+		//	if (strcmp(argv[i], "-skeleton") == 0)
+		//	{
+		//		//std::printf("-Skeleton Information Enabled-\n");
+		//		g_skeleton = true;
+		//	}
+		//}
+
+
+		// TODO remove it
+		g_skeleton = true;
 
 		g_handConfiguration->EnableStabilizer(true);
 		g_handConfiguration->SetTrackingMode(PXCHandData::TRACKING_MODE_FULL_HAND);

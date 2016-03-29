@@ -18,10 +18,10 @@ private :
 
 	long lastSymbolRead = -1;
 
-	int argc;
-	char** argv;
+	char *address;
+	char *room;
 public:
-	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, int ac, char** av);
+	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r);
 
 	static WebSocket::pointer webSock;
 
