@@ -23,6 +23,14 @@ class HandTools {
 
 private :
 
+	struct Hand{
+		PXCHandData::FingerData f1;
+		PXCHandData::FingerData f2;
+		PXCHandData::FingerData f3;
+		PXCHandData::FingerData f4;
+		PXCHandData::FingerData f5;
+	};
+
 	std::wstring g_sequencePath;
 
 	int nbReadFrameRight = 0;
@@ -63,6 +71,8 @@ public :
 	bool isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out);
 
 	void printFold(PXCHandData::IHand *hand);
+
+	uint32_t gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds);
 };
 
 
