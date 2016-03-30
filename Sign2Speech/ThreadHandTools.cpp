@@ -132,6 +132,14 @@ void ThreadHandTools::run() {
 			int currentGesture = 0;
 			int firstFrame = 0;
 			int currentGestComposee = 0;
+			// 1) tableau de taille 3 contenant les vecteurs contenant les données obtenues par les 3 répétitions d'un même geste
+			vector<Hand> repeatedGesture[3];
+			// 2) le vecteur contenant la moyenne, frame par frame, du geste (de taille minNbFrame)
+			vector<Hand> averageGesture;
+			// 3) le vecteur de taille fournie par l'utilisateur (nbGestes) qui contient les différents gestes intermediaires
+			//		et qui recomposent le geste final
+			vector<long> completeGesture;
+
 			time_t start;
 
 			// Acquiring frames from input device
@@ -166,38 +174,52 @@ void ThreadHandTools::run() {
 							}
 							// learning mode
 							else if (learning == true) {
-								// 1) tableau de taille 3 contenant les vecteurs contenant les données obtenues par les 3 répétitions d'un même geste
-								vector<Hand> repeatedGesture[3];
-								// 2) le vecteur contenant la moyenne, frame par frame, du geste (de taille minNbFrame)
-								vector<Hand> averageGesture;
-								// 3) le vecteur de taille fournie par l'utilisateur (nbGestes) qui contient les différents gestes intermediaires
-								//		et qui recomposent le geste final
-								vector<Hand> completeGesture;
 
 								if (firstFrame == 0) {
 									start = time(0);
 									//Reintialiser le vecteur de mouvement
+									repeatedGesture[currentGesture].clear();
 								}
 								//sauvegarder le geste dans un vecteur de mouvement
+								repeatedGesture[currentGesture].push_back(hand);
 
 								if (difftime(start, time(0)) >= 3) {
 									currentGesture++;
 									firstFrame = 0;
-									//sauvegarder le vecteur de mouvement dans le vecteur contenant les 3 gestes
 								}
-
+								//TODO : Affichage utilisateur : répéter geste si currentGesture <3
 
 								if (currentGesture == 3) {
-									//moyenne des 3 gestes du vecteur contenant les 3 gestes
+									//moyenne des 3 gestes du vecteur contenant les 3 gestes 
+									//TODO : appeller fonction reatha avec le tableau repeated geature et qui renvoie un vecteur
+									//averageGesture = function reathatha
+
+
+									long readSymbol;
 									//Si c'est un geste static :sauvegarde la moyenne du geste composé dans unvecteur de geste composee
+									if (averageGesture.size() == 1) {
+										//TODO: appeller fonction reatha qui m'encode le geste et renvoie le long correspondant
+										//readSymbol = fonction reathaStatique(repeatedGesture)
+									}
 									//si c'est un geste dynamique : tu calcula la trajectoire aussi avant de sauvegarder le geste composé et sa trajectoire
+									else {
+										//TODO : appeller une autre fonction qui encode ce geste dynamique et me renvoie le long correspondant
+										//readSymbol = fonction reathaDynamique(repeatedGesture)
+									}
 									currentGesture = 0;
-									//cout confirmation
+									completeGesture.push_back(readSymbol);
 									currentGestComposee++;
-									//Si currentGestComposee == nbGestePRevu
-										//Sauvegarder les gestes composees
+									//TODO : affichage utilisateur et confirmation et indication on passe au geste suivant
+
+									//TODO : passer nbGestComposee en paramètre de la classe/fonction (donnée par l'utilisateur) (à faire par matthieu)
+									//if (currentGestComposee == nbGestComposee) {
+										//Sauvegarder les gestes composees 
+										//TODO : changer le parseur afin qu'il sache lire/écrire un long d'un geste dynamique et appeller cette fonction sur le long readSymbol										
+										//TODO : faire un vecteur de paire de string de long avec completeGesture et la signification : edwin
 										//currentGestComposee = 0;
+										
 										//learning = false;
+									//}
 								}
 							}
 						}
