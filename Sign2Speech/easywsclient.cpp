@@ -15,6 +15,7 @@
     #include <string.h>
     #include <sys/types.h>
     #include <io.h>
+	#include "Debugger.h"
     #ifndef _SSIZE_T_DEFINED
         typedef int ssize_t;
         #define _SSIZE_T_DEFINED

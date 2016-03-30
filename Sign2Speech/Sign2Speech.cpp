@@ -22,7 +22,7 @@ char *address = "localhost:9000";
 char *room = "test";
 
 
-bool attendre = true;
+bool waitForClosure = true;
 
 //Thread managing the Dictionary
 void threadDico() {
@@ -49,7 +49,7 @@ bool CtrlHandler(DWORD fdwCtrlType)
 		mProgram_on.lock();
 		program_on = false;
 		mProgram_on.unlock();
-		while (attendre);
+		while (waitForClosure);
 		return true;
 
 	default:
@@ -70,6 +70,7 @@ bool runCommandParameters(int argc, char** argv) {
 	int c;
 	int errflg = 0;
 
+	//Debugger::chandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	while ((c = getopt(argc, argv, "a:dhr:")) != -1){
 		switch (c) {
 		case 'a':
@@ -77,7 +78,7 @@ bool runCommandParameters(int argc, char** argv) {
 			break;
 		case 'd':
 			// run in debug mode
-			Debugger::debug = true;
+			Debugger::DEBUG_MODE = true;
 			break;
 		case 'h':
 			errflg++;
@@ -110,7 +111,7 @@ void main(int argc, char** argv)
 		tHandTools.join();
 		tDico.join();
 
-		bool attendre = false;
+		waitForClosure = false;
 	}
 }
 

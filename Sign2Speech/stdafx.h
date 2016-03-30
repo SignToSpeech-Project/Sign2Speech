@@ -23,7 +23,7 @@
 #include "Dictionary.h"
 #include "Node.h"
 #include "Parser.h"
-#include "Definitions.h"
+#include "Debugger.h"
 #include "HandTools.h"
 #include "ThreadApp.h"
 
