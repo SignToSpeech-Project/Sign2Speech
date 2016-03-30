@@ -166,6 +166,7 @@
     <ClInclude Include="ThreadApp.h" />
     <ClInclude Include="ThreadDictionary.h" />
     <ClInclude Include="ThreadHandTools.h" />
+    <ClInclude Include="wingetopt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleTools.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="ThreadApp.cpp" />
     <ClCompile Include="ThreadDictionary.cpp" />
     <ClCompile Include="ThreadHandTools.cpp" />
+    <ClCompile Include="wingetopt.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
