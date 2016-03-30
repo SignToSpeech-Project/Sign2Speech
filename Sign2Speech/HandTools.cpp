@@ -112,14 +112,14 @@ vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
 
 
 
-uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[MAXFRAME][5]) {
+uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[1000][5], int length) {
 	uint32_t avg = 0x0;
 
 	// calculate the gesture average
 	for (int f = 0; f < 5; f++) {
 		uint32_t sumFold = 0;
 		vector<uint32_t> v;
-		for (int i = 0; i < MAXFRAME; i++) {
+		for (int i = 0; i < length; i++) {
 			v.push_back(handData[i][f].foldedness);
 		}
 
@@ -191,7 +191,7 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 	else {
 		*nbReadFrame = 0;
 
-		uint32_t average = calculateAverage(handData);
+		uint32_t average = calculateAverage(handData, MAXFRAME);
 		uint8_t movement = analyseMovement();
 		average |= movement << 10;
 
@@ -495,9 +495,9 @@ uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds
 	time_t start = time(0);
 
 	// capture for nbSeconds seconds
-	while (difftime(start, time(0)) <= nbSeconds) {
+	if (difftime(start, time(0)) <= nbSeconds) {
 		// add a new entry into the table
-		PXCHandData::FingerData fingerData;
+		/*PXCHandData::FingerData fingerData;
 		// declare a new hand
 		Hand h;
 
@@ -513,7 +513,7 @@ uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds
 					break;
 				case 3:
 					h.f3 = fingerData;
-					break;
+					break; 
 				case 4:
 					h.f4 = fingerData;
 					break;
@@ -524,17 +524,50 @@ uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds
 					break;
 				}
 			}
-		}
-		//Ajouter la main au vecteur
+		}*/
+		// add the current hand to te handVector
 		handVector.push_back(h);
 	}
 
-	//Declarer handdata
+	//Declare handData to store the content of handVector
 	const int vecSize = handVector.size();
-	PXCHandData::FingerData handData[vecSize][5];
+	PXCHandData::FingerData handData[1000][5];
 
-	//tu ranges chaque main du vecteur dans une case du tableau hand date (boucle for)
-	avg = calculateAverage(handData);
+	// store the content of handVector into handData array
+	for (int i = 0; i < vecSize; i++) {
+		for (int f = 0; f < 5; f++) {
+			switch (f) {
+			case 1:
+				handData[i][f] = handVector.at(i).f1;
+				break;
+			case 2:
+				handData[i][f] = handVector.at(i).f2;
+				break;
+			case 3:
+				handData[i][f] = handVector.at(i).f3;
+				break;
+			case 4:
+				handData[i][f] = handVector.at(i).f4;
+				break;
+			case 5:
+				handData[i][f] = handVector.at(i).f5;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	avg = calculateAverage(handData, vecSize);
 
 	return avg;
+}
+
+uint32_t HandTools::calculateAverageSec(PXCHandData::IHand *hand, double nbSeconds, int nbRepeat) {
+	int i;
+	vector<uint32_t> recGestures;
+
+	for (i = 0; i < nbRepeat; i++) {
+		recGestures.push_back(HandTools::gestureCaptureSec(hand, nbSeconds));
+	}
 }
