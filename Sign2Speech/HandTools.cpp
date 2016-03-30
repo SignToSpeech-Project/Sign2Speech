@@ -237,7 +237,7 @@ void HandTools::printFold(PXCHandData::IHand *hand) {
 	for (int f = 0; f < 5; f++) {
 		if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
 			//std::printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
-			printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
+			//printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
 		}
 	}
 }
@@ -486,7 +486,7 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 /* ************ Automatic learning *********** */
 /***********************************************/
 
-uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds) {
+/*uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds) {
 
 	// Hand vector. Will contain the data of each finger (5) of the hand
 	vector<Hand> handVector;
@@ -497,7 +497,7 @@ uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds
 	// capture for nbSeconds seconds
 	if (difftime(start, time(0)) <= nbSeconds) {
 		// add a new entry into the table
-		/*PXCHandData::FingerData fingerData;
+		PXCHandData::FingerData fingerData;
 		// declare a new hand
 		Hand h;
 
@@ -524,7 +524,7 @@ uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds
 					break;
 				}
 			}
-		}*/
+		}
 		// add the current hand to te handVector
 		handVector.push_back(h);
 	}
@@ -570,4 +570,4 @@ uint32_t HandTools::calculateAverageSec(PXCHandData::IHand *hand, double nbSecon
 	for (i = 0; i < nbRepeat; i++) {
 		recGestures.push_back(HandTools::gestureCaptureSec(hand, nbSeconds));
 	}
-}
+}*/

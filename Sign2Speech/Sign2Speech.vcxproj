@@ -157,6 +157,7 @@
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="Dictionary.h" />
     <ClInclude Include="easywsclient.hpp" />
+    <ClInclude Include="Hand.h" />
     <ClInclude Include="HandTools.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Parser.h" />
@@ -165,12 +166,12 @@
     <ClInclude Include="ThreadApp.h" />
     <ClInclude Include="ThreadDictionary.h" />
     <ClInclude Include="ThreadHandTools.h" />
-    <ClInclude Include="wingetopt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleTools.cpp" />
     <ClCompile Include="Dictionary.cpp" />
     <ClCompile Include="easywsclient.cpp" />
+    <ClCompile Include="Hand.cpp" />
     <ClCompile Include="HandTools.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Parser.cpp" />
@@ -179,7 +180,6 @@
     <ClCompile Include="ThreadApp.cpp" />
     <ClCompile Include="ThreadDictionary.cpp" />
     <ClCompile Include="ThreadHandTools.cpp" />
-    <ClCompile Include="wingetopt.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

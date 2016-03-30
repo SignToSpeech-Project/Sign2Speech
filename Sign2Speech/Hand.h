@@ -40,13 +40,13 @@ public:
 	void setF1(PXCHandData::FingerData newF1) {
 		f1 = newF1;
 	}
-	void setF1(PXCHandData::FingerData newF2) {
+	void setF2(PXCHandData::FingerData newF2) {
 		f2 = newF2;
 	}
-	void setF1(PXCHandData::FingerData newF3) {
+	void setF3(PXCHandData::FingerData newF3) {
 		f3 = newF3;
 	}
-	void setF1(PXCHandData::FingerData newF4) {
+	void setF4(PXCHandData::FingerData newF4) {
 		f4 = newF4;
 	}
 	void setF5(PXCHandData::FingerData newF5) {

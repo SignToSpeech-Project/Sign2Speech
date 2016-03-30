@@ -69,7 +69,7 @@ public :
 
 	uint32_t gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds);
 
-	uint32_t calculateAverageSec(PXCHandData::IHand *hand, double nbSeconds, int nbRepeat)
+	uint32_t calculateAverageSec(PXCHandData::IHand *hand, double nbSeconds, int nbRepeat);
 };
 
 
