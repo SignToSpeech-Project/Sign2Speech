@@ -130,6 +130,12 @@ void ThreadHandTools::run() {
 			printf("\nPXCSenseManager Initializing OK\n========================\n");
 
 			mProgram_on->lock();
+
+			int currentGesture = 0;
+			int firstFrame = 0;
+			int currentGestComposee = 0;
+			time_t start;
+
 			// Acquiring frames from input device
 			while ((ct.getSenseManager())->AcquireFrame(true) == PXC_STATUS_NO_ERROR && (*program_on))
 			{
@@ -150,12 +156,51 @@ void ThreadHandTools::run() {
 							//std::printf("%s\n==============\n", handSide.c_str());
 							//printFold(hand);
 
-							long symbol = h.analyseGesture(hand);
-							if ((symbol != -1) && (symbol != lastSymbolRead )) {
-								mBufferR->lock();
-								bufferRead->push_back(symbol);
-								mBufferR->unlock();
-								lastSymbolRead = symbol;  //Allow the user to keep for example his "fist" gesture during some seconds without changing the dictionary reading level
+							// normal recognition mode
+							if (learning == false) {
+								long symbol = h.analyseGesture(hand);
+								if ((symbol != -1) && (symbol != lastSymbolRead)) {
+									mBufferR->lock();
+									bufferRead->push_back(symbol);
+									mBufferR->unlock();
+									lastSymbolRead = symbol;  //Allow the user to keep for example his "fist" gesture during some seconds without changing the dictionary reading level
+								}
+							}
+							// learning mode
+							else if (learning == true) {
+								// 1) tableau de taille 3 contenant les vecteurs contenant les données obtenues par les 3 répétitions d'un même geste
+								vector<Hand> repeatedGesture[3];
+								// 2) le vecteur contenant la moyenne, frame par frame, du geste (de taille minNbFrame)
+								vector<Hand> averageGesture;
+								// 3) le vecteur de taille fournie par l'utilisateur (nbGestes) qui contient les différents gestes intermediaires
+								//		et qui recomposent le geste final
+								vector<Hand> completeGesture;
+
+								if (firstFrame == 0) {
+									start = time(0);
+									//Reintialiser le vecteur de mouvement
+								}
+								//sauvegarder le geste dans un vecteur de mouvement
+
+								if (difftime(start, time(0)) >= 3) {
+									currentGesture++;
+									firstFrame = 0;
+									//sauvegarder le vecteur de mouvement dans le vecteur contenant les 3 gestes
+								}
+
+
+								if (currentGesture == 3) {
+									//moyenne des 3 gestes du vecteur contenant les 3 gestes
+									//Si c'est un geste static :sauvegarde la moyenne du geste composé dans unvecteur de geste composee
+									//si c'est un geste dynamique : tu calcula la trajectoire aussi avant de sauvegarder le geste composé et sa trajectoire
+									currentGesture = 0;
+									//cout confirmation
+									currentGestComposee++;
+									//Si currentGestComposee == nbGestePRevu
+										//Sauvegarder les gestes composees
+										//currentGestComposee = 0;
+										//learning = false;
+								}
 							}
 						}
 					}

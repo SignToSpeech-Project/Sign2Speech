@@ -24,20 +24,12 @@ class HandTools {
 
 private :
 
-	struct Hand{
-		PXCHandData::FingerData f1;
-		PXCHandData::FingerData f2;
-		PXCHandData::FingerData f3;
-		PXCHandData::FingerData f4;
-		PXCHandData::FingerData f5;
-	};
-
 	std::wstring g_sequencePath;
 
 	int nbReadFrameRight = 0;
 	int nbReadFrameLeft = 0;
-	PXCHandData::FingerData rightHandData[MAXFRAME][5];
-	PXCHandData::FingerData leftHandData[MAXFRAME][5];
+	PXCHandData::FingerData rightHandData[1000][5];
+	PXCHandData::FingerData leftHandData[1000][5];
 	PXCPoint3DF32 massCenterCoordinates[MAXFRAME];
 	const uint32_t unite = 0b1;
 
@@ -57,7 +49,7 @@ public :
 
 	vector<uint32_t> removeOutValues(vector<uint32_t> v);
 	
-	uint32_t calculateAverage(PXCHandData::FingerData handData[MAXFRAME][5]);
+	uint32_t calculateAverage(PXCHandData::FingerData handData[1000][5], int length);
 
 	long analyseGesture(PXCHandData::IHand *hand);
 
@@ -76,6 +68,8 @@ public :
 	void printFold(PXCHandData::IHand *hand);
 
 	uint32_t gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds);
+
+	uint32_t calculateAverageSec(PXCHandData::IHand *hand, double nbSeconds, int nbRepeat);
 };
 
 
