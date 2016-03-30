@@ -78,19 +78,5 @@
       "word": "Etats-Unis",
       "gesture": "0x3FF"
     }
-  ],
-  "Douze": [
-    {
-      "word": "tmp",
-      "gesture": "0xF"
-    },
-    {
-      "word": "tmp2",
-      "gesture": "0x2000F"
-    },
-    {
-      "word": "Douze",
-      "gesture": "0xF"
-    }
   ]
 }

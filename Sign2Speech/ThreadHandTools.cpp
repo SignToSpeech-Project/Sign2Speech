@@ -35,7 +35,7 @@ void ThreadHandTools::run() {
 	//ThreadHandTools::webSock = WebSocket::from_url("ws://52.35.210.217/ws/subtitle/test");
 
 	if (ThreadHandTools::webSock != NULL) {
-		printf("Connected to the WebSocket server (52.35.210.217)\n");
+		Debugger::info("Connected to the WebSocket server " + webSocketAddress.str());
 		//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 		HandTools h;
@@ -50,22 +50,22 @@ void ThreadHandTools::run() {
 		ct.setSession(PXCSession::CreateInstance());
 		if (!(ct.getSession()))
 		{
-			printf("Failed Creating PXCSession\n");
+			Debugger::error("Failed Creating PXCSession");
 			return;
 		}
 
 		ct.setSenseManager(ct.getSession()->CreateSenseManager());
 		if (!(ct.getSenseManager()))
 		{
-			ct.releaseAll(); //TODO : Fonction dans HandTools.cpp . Attention, il faut lui passer des paramètres maintenant. A discuter
-			printf("Failed Creating PXCSenseManager\n");
+			ct.releaseAll();
+			Debugger::error("Failed Creating PXCSenseManager");
 			return;
 		}
 
 		if ((ct.getSenseManager())->EnableHand() != PXC_STATUS_NO_ERROR)
 		{
 			ct.releaseAll();
-			printf("Failed Enabling Hand Module\n");
+			Debugger::error("Failed Enabling Hand Module");
 			return;
 		}
 
@@ -73,7 +73,7 @@ void ThreadHandTools::run() {
 		if (!g_handModule)
 		{
 			ct.releaseAll();
-			printf("Failed Creating PXCHandModule\n");
+			Debugger::error("Failed Creating PXCHandModule");
 			return;
 		}
 
@@ -81,7 +81,7 @@ void ThreadHandTools::run() {
 		if (!g_handDataOutput)
 		{
 			ct.releaseAll();
-			printf("Failed Creating PXCHandData\n");
+			Debugger::error("Failed Creating PXCHandData");
 			return;
 		}
 
@@ -89,7 +89,7 @@ void ThreadHandTools::run() {
 		if (!g_handConfiguration)
 		{
 			ct.releaseAll();
-			printf("Failed Creating PXCHandConfiguration\n");
+			Debugger::error("Failed Creating PXCHandConfiguration");
 			return;
 		}
 
@@ -125,7 +125,7 @@ void ThreadHandTools::run() {
 		// First Initializing the sense manager
 		if ((ct.getSenseManager())->Init() == PXC_STATUS_NO_ERROR)
 		{
-			printf("\nPXCSenseManager Initializing OK\n========================\n");
+			Debugger::info("\nPXCSenseManager Initializing OK\n========================\n");
 
 			mProgram_on->lock();
 
@@ -235,12 +235,12 @@ void ThreadHandTools::run() {
 		else
 		{
 			ct.releaseAll();
-			printf("Failed Initializing PXCSenseManager\n");
+			Debugger::error("Failed Initializing PXCSenseManager");
 			return;
 		}
 	}
 	else {
-		printf("Unable to connect to the WebSocket server (52.35.210.217)\n");
+		Debugger::error("Unable to connect to the WebSocket server " + webSocketAddress.str());
 	}
 
 	ct.releaseAll();

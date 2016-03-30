@@ -5,17 +5,9 @@
 			"gesture": "0x00000006"
 		}
 	],
-	"Douze": [
+	"lundi": [
 		{
-			"word": "tmp",
-			"gesture": "0x0000000f"
-		},
-		{
-			"word": "tmp2",
-			"gesture": "0x0002000f"
-		},
-		{
-			"word": "Douze",
+			"word": "lundi",
 			"gesture": "0x0000000f"
 		}
 	],
