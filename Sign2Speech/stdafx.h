@@ -12,6 +12,7 @@
 #include <windows.h>
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 #include "pxcsensemanager.h"
 #include "pxcmetadata.h"

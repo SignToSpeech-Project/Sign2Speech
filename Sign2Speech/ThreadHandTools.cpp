@@ -28,12 +28,10 @@ void ThreadHandTools::run() {
 		return;
 	}
 #endif
-	string webSocketAddress = "ws://";
-	webSocketAddress += address;
-	webSocketAddress += "/ws/subtitle/";
-	webSocketAddress += room;
+	std::stringstream webSocketAddress;
+	webSocketAddress << "ws://" << address << "/ws/subtitle/" << room;
 	
-	ThreadHandTools::webSock = WebSocket::from_url(webSocketAddress);
+	ThreadHandTools::webSock = WebSocket::from_url(webSocketAddress.str());
 	//ThreadHandTools::webSock = WebSocket::from_url("ws://52.35.210.217/ws/subtitle/test");
 
 	if (ThreadHandTools::webSock != NULL) {

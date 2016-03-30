@@ -16,6 +16,7 @@
     #include <sys/types.h>
     #include <io.h>
 	#include "Debugger.h"
+	#include <sstream>
     #ifndef _SSIZE_T_DEFINED
         typedef int ssize_t;
         #define _SSIZE_T_DEFINED
@@ -431,11 +432,15 @@ easywsclient::WebSocket::pointer from_url(const std::string& url, bool useMask, 
     int port;
     char path[128];
     if (url.size() >= 128) {
-      fprintf(stderr, "ERROR: url size limit exceeded: %s\n", url.c_str());
+		std::stringstream out;
+		out << "ERROR: url size limit exceeded: " << url.c_str();
+		Debugger::error(out.str());
       return NULL;
     }
     if (origin.size() >= 200) {
-      fprintf(stderr, "ERROR: origin size limit exceeded: %s\n", origin.c_str());
+		std::stringstream out;
+		out << "ERROR: origin size limit exceeded: " << origin.c_str();
+		Debugger::error(out.str());
       return NULL;
     }
     if (false) { }
@@ -452,13 +457,19 @@ easywsclient::WebSocket::pointer from_url(const std::string& url, bool useMask, 
         path[0] = '\0';
     }
     else {
-        fprintf(stderr, "ERROR: Could not parse WebSocket url: %s\n", url.c_str());
+		std::stringstream out;
+		out << "ERROR: Could not parse WebSocket url: " << url.c_str();
+		Debugger::error(out.str());
         return NULL;
     }
-    fprintf(stderr, "easywsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
+	std::stringstream out;
+	out << "easywsclient: connecting: host=" << host << " port=" << port << " path=/" << path << "\n";
+	Debugger::debug(out.str());
     socket_t sockfd = hostname_connect(host, port);
     if (sockfd == INVALID_SOCKET) {
-        fprintf(stderr, "Unable to connect to %s:%d\n", host, port);
+		std::stringstream out;
+		out << "Unable to connect to " << host << ":" << port;
+		Debugger::error(out.str());
         return NULL;
     }
     {
@@ -499,7 +510,9 @@ easywsclient::WebSocket::pointer from_url(const std::string& url, bool useMask, 
 #else
     fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
-    fprintf(stderr, "Connected to: %s\n", url.c_str());
+	out.clear();
+	out << "Connected to: " << url.c_str();
+	Debugger::debug(out.str());
     return easywsclient::WebSocket::pointer(new _RealWebSocket(sockfd, useMask));
 }
 

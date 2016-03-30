@@ -20,7 +20,9 @@ vector<vector<pair<string, long>>> bufferWrite;
 
 char *address = "localhost:9000";
 char *room = "test";
-
+bool learning = false;
+char *signification = "";
+int gestureNumber = 0;
 
 bool waitForClosure = true;
 
@@ -63,6 +65,9 @@ void howToUse() {
 	printf("\t\tThe address should be defined as: IPv4_Address[:port]\n");
 	printf("\t-d\tRun the software in debug mode\n");
 	printf("\t-h\tRun help\n");
+	printf("\t-l\tRun the software in learning mode\n");
+	printf("\t-n\tDefine the number of gesture to do in learning mode (>0)\n");
+	printf("\t-s\tDefine the signification of the world in learning mode (different from empty string: \"\")\n");
 	printf("\t-r\tDefine the room name otherwise use default  room name: \"test\"\n");
 }
 
@@ -70,8 +75,7 @@ bool runCommandParameters(int argc, char** argv) {
 	int c;
 	int errflg = 0;
 
-	//Debugger::chandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	while ((c = getopt(argc, argv, "a:dhr:")) != -1){
+	while ((c = getopt(argc, argv, "a:dhlnr:s:")) != -1){
 		switch (c) {
 		case 'a':
 			address = optarg;
@@ -83,13 +87,25 @@ bool runCommandParameters(int argc, char** argv) {
 		case 'h':
 			errflg++;
 			break;
+		case 'l':
+			learning = true;
+			break;
+		case 'n':
+			gestureNumber = atoi(optarg);
+			break;
 		case 'r':
 			room = optarg;
+			break;
+		case 's':
+			signification = optarg;
 			break;
 		case '?':
 			errflg++;
 			break;
 		}
+	}
+	if (learning && (!(strcmp(signification, "") || gestureNumber == 0))) {
+		errflg++;
 	}
 	if (errflg) {
 		howToUse();
