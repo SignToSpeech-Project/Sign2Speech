@@ -35,7 +35,8 @@ void threadDico() {
 
 //Thread managing the camera and the gestures recognization
 void threadHandTool() {
-	ThreadHandTools d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite, address, room);
+	string signif(signification, 1000);
+	ThreadHandTools d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite, address, room,learning,signif,gestureNumber);
 	d.run();
 }
 

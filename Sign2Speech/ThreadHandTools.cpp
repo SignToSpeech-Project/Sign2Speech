@@ -2,9 +2,12 @@
 
 WebSocket::pointer ThreadHandTools::webSock = NULL;
 
-ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
+ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r, bool l, string nmc, int nbmc) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 	address = ad;
 	room = r;
+	learning = l;
+	nbMotCompose = nbmc;
+	nomMotCompose = nmc;
 }
 
 void ThreadHandTools::handle_message(const std::string & message) {
@@ -39,6 +42,7 @@ void ThreadHandTools::run() {
 		//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 		HandTools h;
+		h.setNbMotCompose(nbMotCompose);
 
 		/*if (argc < 2)
 		{
@@ -132,10 +136,6 @@ void ThreadHandTools::run() {
 			int currentGesture = 0;
 			int firstFrame = 0;
 			int currentGestComposee = 0;
-			// 1) tableau de taille 3 contenant les vecteurs contenant les données obtenues par les 3 répétitions d'un même geste
-			vector<Hand> repeatedGesture[3];
-			// 2) le vecteur contenant la moyenne, frame par frame, du geste (de taille minNbFrame)
-			vector<Hand> averageGesture;
 			// 3) le vecteur de taille fournie par l'utilisateur (nbGestes) qui contient les différents gestes intermediaires
 			//		et qui recomposent le geste final
 			vector<long> completeGesture;
@@ -175,6 +175,25 @@ void ThreadHandTools::run() {
 							// learning mode
 							else if (learning == true) {
 								long symbol = h.analyseXGestures(hand);
+								if (symbol != -1) {
+									if (h.getLearning()) {
+										learning = false;
+										pair<string, long> temp(nomMotCompose, symbol);
+										learningGest.push_back(temp);
+										mBufferW->lock();
+										bufferWrite->push_back(learningGest);
+										mBufferW->unlock();
+										learningGest.clear();
+
+										Debugger::debug("------------------------MOT ENREGISTRE------------------------");
+										Sleep(1000);
+										Debugger::debug("------------------------PASSAGE MODE RECONNAISSANCE DE GESTES------------------------");
+									}
+									else {
+										pair<string, long> temp("", symbol);
+										learningGest.push_back(temp);
+									}
+								}
 
 								//learning = false;
 							}

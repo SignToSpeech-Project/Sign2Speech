@@ -1,5 +1,4 @@
 #include <algorithm>
-
 #include "HandTools.h"
 #include "ThreadHandTools.h"
 
@@ -487,8 +486,9 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 /***********************************************/
 
 long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
+	learning = true;
 	long avg;
-	long readSymbol;
+	long readSymbol = -1;
 	int nbMassCenter = 0;
 	vector<uint8_t> trajectories;
 	uint8_t trajectory;
@@ -517,6 +517,19 @@ long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
 	}
 
 	if (nbGesture < 3) {
+		/*std::stringstream out;
+		out << ;
+		Debugger::info(out.str());*/
+		Debugger::info("Répéter le même geste dans 5 secondes");
+		Sleep(1000);
+		Debugger::info("4");
+		Sleep(1000);
+		Debugger::info("3");
+		Sleep(1000);
+		Debugger::info("2");
+		Sleep(1000);
+		Debugger::info("1");
+		Sleep(1000);
 		Debugger::info("Répéter le même geste");
 	}
 
@@ -526,20 +539,13 @@ long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
 
 		trajectory = averageTrajectory(trajectories);
 		readSymbol = avg | (trajectory << 10);
-
 		nbGesture = 0;
 		completeGesture.push_back(readSymbol);
 		currentGestComposee++;
-		//TODO : affichage utilisateur et confirmation et indication on passe au geste suivant
-
-		//TODO : passer nbGestComposee en paramètre de la classe/fonction (donnée par l'utilisateur) (à faire par matthieu)
-		//if (currentGestComposee == nbGestComposee) {
-		//Sauvegarder les gestes composees 
-		//TODO : changer le parseur afin qu'il sache lire/écrire un long d'un geste dynamique et appeller cette fonction sur le long readSymbol										
-		//TODO : faire un vecteur de paire de string de long avec completeGesture et la signification : edwin
-		//currentGestComposee = 0;
-
-		//learning = false;
+		if (currentGestComposee == nbMotCompose) {
+			currentGestComposee = 0;
+			learning = false;
+		}
 	}
 	return readSymbol;
 }

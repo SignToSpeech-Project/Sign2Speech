@@ -53,8 +53,18 @@ private :
 
 	time_t start;
 
+	bool learning = false;
+
+
+	int nbMotCompose;
+
 public :
 
+	void setNbMotCompose(int nbmc) {
+		nbMotCompose = nbmc;
+	}
+
+	bool getLearning() { return learning; }
 	int calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step);
 
 	boolean isGesture(uint32_t gesture, uint32_t ref, int distMax, int maxApproximateFinger);

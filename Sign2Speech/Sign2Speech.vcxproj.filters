@@ -51,9 +51,6 @@
     <ClInclude Include="ThreadHandTools.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Hand.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Debugger.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -93,9 +90,6 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="ThreadHandTools.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Hand.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Debugger.cpp">
