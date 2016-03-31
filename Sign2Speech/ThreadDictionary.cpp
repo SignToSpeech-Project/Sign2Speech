@@ -32,10 +32,10 @@ void ThreadDictionary::run() {
 
 		mBufferW->lock();
 		if (bufferWrite->size() != 0) { //Update Dico
-			for (vector<vector<pair<string, long>>>::iterator it = bufferWrite->begin(); it != bufferWrite->end(); ++it) {
-				d.insertList((*it));
-				bufferWrite->erase(it);
-			}
+			vector<vector<pair<string, long>>>::iterator it = bufferWrite->begin(); 
+			d.insertList((*it));
+			bufferWrite->erase(it);
+			
 		}
 		mBufferW->unlock();
 

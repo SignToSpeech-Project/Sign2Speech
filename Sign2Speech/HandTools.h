@@ -55,6 +55,7 @@ private :
 
 	bool learning = false;
 
+	vector<uint8_t> trajectories;
 
 	int nbMotCompose;
 

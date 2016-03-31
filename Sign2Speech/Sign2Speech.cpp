@@ -76,7 +76,7 @@ bool runCommandParameters(int argc, char** argv) {
 	int c;
 	int errflg = 0;
 
-	while ((c = getopt(argc, argv, "a:dhlnr:s:")) != -1){
+	while ((c = getopt(argc, argv, "a:dhln:r:s:")) != -1){
 		switch (c) {
 		case 'a':
 			address = optarg;

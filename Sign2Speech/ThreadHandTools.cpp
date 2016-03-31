@@ -176,7 +176,8 @@ void ThreadHandTools::run() {
 							else if (learning == true) {
 								long symbol = h.analyseXGestures(hand);
 								if (symbol != -1) {
-									if (h.getLearning()) {
+									if (!(h.getLearning())) {
+										cout << "enregistrement" << endl;
 										learning = false;
 										pair<string, long> temp(nomMotCompose, symbol);
 										learningGest.push_back(temp);
@@ -186,7 +187,7 @@ void ThreadHandTools::run() {
 										learningGest.clear();
 
 										Debugger::debug("------------------------MOT ENREGISTRE------------------------");
-										Sleep(1000);
+										//Sleep(1000);
 										Debugger::debug("------------------------PASSAGE MODE RECONNAISSANCE DE GESTES------------------------");
 									}
 									else {
