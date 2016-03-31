@@ -9,7 +9,9 @@
 using easywsclient::WebSocket;
 
 class ThreadHandTools : public ThreadApp {
+
 private :
+
 	PXCHandModule *g_handModule;
 	PXCHandData *g_handDataOutput;
 	PXCHandConfiguration *g_handConfiguration;
@@ -27,7 +29,7 @@ private :
 	char *address;
 	char *room;
 public:
-	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r, bool l, string nmc, int nbmc);
+	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r);
 
 	static WebSocket::pointer webSock;
 

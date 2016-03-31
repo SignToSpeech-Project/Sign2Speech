@@ -28,6 +28,7 @@ private :
 
 	int nbReadFrameRight = 0;
 	int nbReadFrameLeft = 0;
+	int nbMassCenter = 0;
 	PXCHandData::FingerData rightHandData[1000][5];
 	PXCHandData::FingerData leftHandData[1000][5];
 	PXCPoint3DF32 massCenterCoordinates[1000];
@@ -44,10 +45,7 @@ private :
 	int nbGesture = 0;
 	int firstFrame = 0;
 	int nbFrame = 0;
-	int currentGestComposee = 0;
-	// 3) le vecteur de taille fournie par l'utilisateur (nbGestes) qui contient les différents gestes intermediaires
-	//		et qui recomposent le geste final
-	vector<long> completeGesture;
+	int currentGestComposee = 0;  
 
 	PXCHandData::FingerData handData[1000][5];
 
@@ -61,11 +59,19 @@ private :
 
 public :
 
-	void setNbMotCompose(int nbmc) {
+	void learningMode(int nbmc) {
 		nbMotCompose = nbmc;
+		nbGesture = 0;
+		firstFrame = 0;
+		nbFrame = 0;
+		currentGestComposee = 0;
+		nbMassCenter = 0;
+		learning = true;
+		trajectories.clear();
 	}
 
 	bool getLearning() { return learning; }
+
 	int calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step);
 
 	boolean isGesture(uint32_t gesture, uint32_t ref, int distMax, int maxApproximateFinger);

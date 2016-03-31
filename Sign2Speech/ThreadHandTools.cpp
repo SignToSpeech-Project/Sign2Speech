@@ -2,12 +2,9 @@
 
 WebSocket::pointer ThreadHandTools::webSock = NULL;
 
-ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r, bool l, string nmc, int nbmc) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
+ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
 	address = ad;
 	room = r;
-	learning = l;
-	nbMotCompose = nbmc;
-	nomMotCompose = nmc;
 }
 
 void ThreadHandTools::handle_message(const std::string & message) {
@@ -42,7 +39,6 @@ void ThreadHandTools::run() {
 		//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 		HandTools h;
-		h.setNbMotCompose(nbMotCompose);
 
 		/*if (argc < 2)
 		{
@@ -141,6 +137,34 @@ void ThreadHandTools::run() {
 			vector<long> completeGesture;
 
 			time_t start;
+			int cpt_Geasture = 1;
+
+			Debugger::info("Voulez vou ajouter des mots au dictionnaire ? o/n");
+			string answer;
+			cin >> answer;
+			if ((answer == "o") || (answer == "O")) {
+
+				learning = true;
+				int nbmc;
+				string nmc;
+				Debugger::info("Veuilez entre la signification du geste :");
+				cin >> nmc;
+				Debugger::info("Veuilez entre le nombre de gestes à faire :");
+				cin >> nbmc;
+
+				nbMotCompose = nbmc;
+				nomMotCompose = nmc;
+
+				h.learningMode(nbmc);
+
+				Debugger::info("Le learning commence dans 5 secondes, soyez prêt");
+				for (int i = 5; i > 0; i--) {
+					Debugger::info(to_string(i));
+					Sleep(1000);
+				}
+				Debugger::info("----------------------VEUILLEZ FAIRE VOTRE PREMIER GESTE DURANT 3 SECONDES----------------------");
+
+			}
 
 			// Acquiring frames from input device
 			while ((ct.getSenseManager())->AcquireFrame(true) == PXC_STATUS_NO_ERROR && (*program_on))
@@ -176,8 +200,7 @@ void ThreadHandTools::run() {
 							else if (learning == true) {
 								long symbol = h.analyseXGestures(hand);
 								if (symbol != -1) {
-									if (!(h.getLearning())) {
-										cout << "enregistrement" << endl;
+									if (h.getLearning()) {
 										learning = false;
 										pair<string, long> temp(nomMotCompose, symbol);
 										learningGest.push_back(temp);
@@ -186,13 +209,40 @@ void ThreadHandTools::run() {
 										mBufferW->unlock();
 										learningGest.clear();
 
-										Debugger::debug("------------------------MOT ENREGISTRE------------------------");
-										//Sleep(1000);
-										Debugger::debug("------------------------PASSAGE MODE RECONNAISSANCE DE GESTES------------------------");
+										Debugger::info("------------------------MOT ENREGISTRE------------------------");
+										Sleep(2000);
+										Debugger::info("Voulez vous entrer un nouveau mot ? o/n");
+										string answer;
+										cin >> answer;
+										if ((answer == "o") || (answer == "O")) {
+
+											learning = true;
+											int nbmc;
+											string nmc;
+											Debugger::info("Veuilez entre la signification du geste :");
+											cin >> nmc;
+											Debugger::info("Veuilez entre le nombre de gestes à faire :");
+											cin >> nbmc;
+
+											nbMotCompose = nbmc;
+											nomMotCompose = nmc;
+
+											h.learningMode(nbmc);
+
+										}
+										else Debugger::info("------------------------PASSAGE EN MODE RECONNAISSANCE DE GESTES------------------------");
 									}
 									else {
 										pair<string, long> temp("", symbol);
 										learningGest.push_back(temp);
+										cpt_Geasture++;
+										string msg = "------------------------PREPAREZ VOUS POUR VOTRE GESTE N°" + to_string(cpt_Geasture) + " DANS 5 SECONDES------------------------";
+										Debugger::info(msg);
+										for (int i = 5; i > 0; i--) {
+											Debugger::info(to_string(i));
+											Sleep(1000);
+										}
+										Debugger::info("-------------------------------Faites votre geste MAINTENANT pendant 3 secondes-------------------------------");
 									}
 								}
 

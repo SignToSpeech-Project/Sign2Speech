@@ -35,8 +35,7 @@ void threadDico() {
 
 //Thread managing the camera and the gestures recognization
 void threadHandTool() {
-	string signif(signification, 1000);
-	ThreadHandTools d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite, address, room,learning,signif,gestureNumber);
+	ThreadHandTools d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite, address, room);
 	d.run();
 }
 
@@ -54,7 +53,6 @@ bool CtrlHandler(DWORD fdwCtrlType)
 		mProgram_on.unlock();
 		while (waitForClosure);
 		return true;
-
 	default:
 		return FALSE;
 	}
@@ -88,17 +86,8 @@ bool runCommandParameters(int argc, char** argv) {
 		case 'h':
 			errflg++;
 			break;
-		case 'l':
-			learning = true;
-			break;
-		case 'n':
-			gestureNumber = atoi(optarg);
-			break;
 		case 'r':
 			room = optarg;
-			break;
-		case 's':
-			signification = optarg;
 			break;
 		case '?':
 			errflg++;

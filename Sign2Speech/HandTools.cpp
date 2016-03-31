@@ -487,18 +487,12 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 /***********************************************/
 
 long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
-	learning = true;
 	long avg;
 	long readSymbol = -1;
-	int nbMassCenter = 0;
 	uint8_t trajectory;
 
-	if (firstFrame == 0) {
-		Debugger::info("Début apprentissage");
-
-		start = time(0);
-	}
-
+	if (firstFrame == 0) start = time(0);
+	
 	// add a new entry into the table
 	PXCHandData::FingerData fingerData;
 	for (int f = 0; f < 5; f++) {
@@ -512,53 +506,44 @@ long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
 	nbMassCenter++;
 	firstFrame = 1;
 
-	//cout << difftime(start, time(0)) << endl;
-	//Debugger::debug(out);
 
 	if (difftime(time(0), start) >= 3.0) {
 		trajectories.push_back(analyseMovement(nbMassCenter));
 		nbGesture++;
 		firstFrame = 0;
 		nbMassCenter = 0;
+
 		if (nbGesture < 3) {
 			/*std::stringstream out;
 			out << ;
 			Debugger::info(out.str());*/
-			Debugger::info("Répéter le même geste dans 5 secondes");
-			Sleep(1000);
-			Debugger::info("4");
-			Sleep(1000);
-			Debugger::info("3");
-			Sleep(1000);
-			Debugger::info("2");
-			Sleep(1000);
-			Debugger::info("1");
-			Sleep(1000);
-			Debugger::info("Répéter le même geste");
+			Debugger::info("-------------------------------Répéter le même geste dans 5 secondes-------------------------------");
+			for (int i = 5; i > 0; i--) {
+				Debugger::info(to_string(i));
+				Sleep(1000);
+			}
+			Debugger::info("-------------------------------Répéter le même geste MAINTENANT-------------------------------");
 		}
-	}
 
+		else {
+			Debugger::info("------------------------------PATIENTEZ SVP--------------------------------");
 
-
-	if (nbGesture == 3) {
-		//moyenne des 3 gestes du vecteur contenant les 3 gestes
-		cout << "entree if geste " << endl;
-		avg = calculateAverage(handData, nbFrame);
-
-		trajectory = averageTrajectory(trajectories);
-		readSymbol = avg | (trajectory << 10);
-		nbGesture = 0;
-		cout << "push back" << endl;
-		completeGesture.push_back(readSymbol);
-		currentGestComposee++;
-		cout << "verification geste "<<endl;
-		if (currentGestComposee == nbMotCompose) {
-			currentGestComposee = 0;
-			learning = false;
+			//moyenne des 3 gestes du vecteur contenant les 3 gestes
+			avg = calculateAverage(handData, nbFrame);
+			trajectory = averageTrajectory(trajectories);
+			readSymbol = avg | (trajectory << 10);
+			nbGesture = 0;
+			nbFrame = 0;
+			trajectories.clear();
+			currentGestComposee++;
+			
+			if (currentGestComposee == nbMotCompose) learning = false;
+			
 		}
 	}
 	return readSymbol;
 }
+
 
 uint8_t HandTools::averageTrajectory(vector<uint8_t> trajectories) {
 	uint8_t t0 = trajectories.at(0);
