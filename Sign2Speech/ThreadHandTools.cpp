@@ -174,53 +174,9 @@ void ThreadHandTools::run() {
 							}
 							// learning mode
 							else if (learning == true) {
+								long symbol = h.analyseXGestures(hand);
 
-								if (firstFrame == 0) {
-									start = time(0);
-									//Reintialiser le vecteur de mouvement
-									repeatedGesture[currentGesture].clear();
-								}
-								//sauvegarder le geste dans un vecteur de mouvement
-								repeatedGesture[currentGesture].push_back(hand);
-
-								if (difftime(start, time(0)) >= 3) {
-									currentGesture++;
-									firstFrame = 0;
-								}
-								//TODO : Affichage utilisateur : répéter geste si currentGesture <3
-
-								if (currentGesture == 3) {
-									//moyenne des 3 gestes du vecteur contenant les 3 gestes 
-									//TODO : appeller fonction reatha avec le tableau repeated geature et qui renvoie un vecteur
-									//averageGesture = function reathatha
-
-
-									long readSymbol;
-									//Si c'est un geste static :sauvegarde la moyenne du geste composé dans unvecteur de geste composee
-									if (averageGesture.size() == 1) {
-										//TODO: appeller fonction reatha qui m'encode le geste et renvoie le long correspondant
-										//readSymbol = fonction reathaStatique(repeatedGesture)
-									}
-									//si c'est un geste dynamique : tu calcula la trajectoire aussi avant de sauvegarder le geste composé et sa trajectoire
-									else {
-										//TODO : appeller une autre fonction qui encode ce geste dynamique et me renvoie le long correspondant
-										//readSymbol = fonction reathaDynamique(repeatedGesture)
-									}
-									currentGesture = 0;
-									completeGesture.push_back(readSymbol);
-									currentGestComposee++;
-									//TODO : affichage utilisateur et confirmation et indication on passe au geste suivant
-
-									//TODO : passer nbGestComposee en paramètre de la classe/fonction (donnée par l'utilisateur) (à faire par matthieu)
-									//if (currentGestComposee == nbGestComposee) {
-										//Sauvegarder les gestes composees 
-										//TODO : changer le parseur afin qu'il sache lire/écrire un long d'un geste dynamique et appeller cette fonction sur le long readSymbol										
-										//TODO : faire un vecteur de paire de string de long avec completeGesture et la signification : edwin
-										//currentGestComposee = 0;
-										
-										//learning = false;
-									//}
-								}
+								//learning = false;
 							}
 						}
 					}

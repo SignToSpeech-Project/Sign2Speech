@@ -192,7 +192,7 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		*nbReadFrame = 0;
 
 		uint32_t average = calculateAverage(handData, MAXFRAME);
-		uint8_t movement = analyseMovement();
+		uint8_t movement = analyseMovement(MAXFRAME);
 		average |= movement << 10;
 
 		printf("[%ld]\t", frameCounter);
@@ -244,40 +244,40 @@ void HandTools::printFold(PXCHandData::IHand *hand) {
 
 
 /* Analyse the movement of the gesture (straight, circular or elliptic) from all the points that compose the gesture */
-uint8_t HandTools::analyseMovement() {
+uint8_t HandTools::analyseMovement(int nbFrame) {
 
 	// coordinates of the first point of the movement
 	PXCPoint3DF32 p0 = massCenterCoordinates[0];
 
 	// coordinates of the middle point of the movement
-	PXCPoint3DF32 pm = massCenterCoordinates[(int)(MAXFRAME/2)];
+	PXCPoint3DF32 pm = massCenterCoordinates[(int)(nbFrame/2)];
 
 	// coordinates of the last point of the movement
-	PXCPoint3DF32 pf = massCenterCoordinates[MAXFRAME - 1];
+	PXCPoint3DF32 pf = massCenterCoordinates[nbFrame - 1];
 
 	uint8_t temp = 0b0 ;
 
-	if (isStatic(&temp)) {
+	if (isStatic(&temp, nbFrame)) {
 		return temp;
 	}
 	else if (isStraight(p0, pm, pf, &temp)) {
 		// do things with temp and symb
 		return temp;
 	}
-	else if (isElliptic(p0, pm, pf, &temp)) {
+	else if (isElliptic(p0, pm, pf, &temp, nbFrame)) {
 		// do things with temp and symb
 		return temp;
 	}
 	return 0;
 }
 
-bool HandTools::isStatic(uint8_t *out) {
+bool HandTools::isStatic(uint8_t *out, int nbFrame) {
 	int i;
 	int cpt = 0;
 	PXCPoint3DF32 p0 = massCenterCoordinates[0];
 	PXCPoint3DF32 p_current;
 
-	for (i = 1; i < MAXFRAME; i++) {
+	for (i = 1; i < nbFrame; i++) {
 		p_current = massCenterCoordinates[i];
 		if ((abs(p0.x - p_current.x) <= NBMETERS_STATIC) && (abs(p0.y - p_current.y) <= NBMETERS_STATIC)) {
 			cpt++;
@@ -285,7 +285,7 @@ bool HandTools::isStatic(uint8_t *out) {
 		p0 = p_current;
 	}
 	//cout << cpt << endl;
-	if (cpt > (float)MAXFRAME*0.92) {
+	if (cpt > (float)nbFrame*0.92) {
 		cout << "STATIQUE" << endl;
 		//printf("STATIQUE\n");
 		return true;
@@ -423,7 +423,7 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 	}
 }
 
-bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out) {
+bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out, int nbFrame) {
 	// center coordinates pc(xc, yc)
 	PXCPoint3DF32 pc;
 
@@ -438,7 +438,7 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		float b = sqrt(pow(pm.x - pc.x, 2) + pow(pm.y - pc.y, 2));
 
 		// chose 1 point, different from p0, pm and pf, to see if it respects the ellipse eq
-		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(MAXFRAME / 3)];
+		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(nbFrame / 3)];
 		if ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) <= ERR_ELLIPSE) {
 			//cout << "NOT FULL ELLIPSE" << endl;
 			printf("NOT FULL ELLIPSE\n");
@@ -460,14 +460,14 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		float a = sqrt(pow(pf.x - pc.x, 2) + pow(pf.x - pc.y, 2));
 		
 		// pm2 is the point at the first quarter of the point list (the middle of the first half of the list)
-		PXCPoint3DF32 pm2 = massCenterCoordinates[(int)(MAXFRAME / 4)];
+		PXCPoint3DF32 pm2 = massCenterCoordinates[(int)(nbFrame / 4)];
 
 		// b is the distance between pm2(pm2.x, pm2.y) and pc(pc.x, pc.y)
 		float b = sqrt(pow(pm2.x - pc.x, 2) + pow(pm2.y - pc.y, 2));
 
 		// chose 2 points, different from p0, pm, pm2 and pf, to see if they respect the ellipse eq
-		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(MAXFRAME / 3)];
-		PXCPoint3DF32 p2 = massCenterCoordinates[(int)(2*MAXFRAME / 3)];
+		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(nbFrame / 3)];
+		PXCPoint3DF32 p2 = massCenterCoordinates[(int)(2*nbFrame / 3)];
 		if ( ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE)
 		&& ((abs(pow(p2.x - pc.x, 2) / (a*a) + pow(p2.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE) ) {
 			//cout << "FULL ELLIPSE" << endl;
@@ -486,88 +486,79 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 /* ************ Automatic learning *********** */
 /***********************************************/
 
-/*uint32_t HandTools::gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds) {
+long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
+	long avg;
+	long readSymbol;
+	int nbMassCenter = 0;
+	vector<uint8_t> trajectories;
+	uint8_t trajectory;
 
-	// Hand vector. Will contain the data of each finger (5) of the hand
-	vector<Hand> handVector;
-	int nbReadFrame = 0;
-	uint32_t avg;
-	time_t start = time(0);
-
-	// capture for nbSeconds seconds
-	if (difftime(start, time(0)) <= nbSeconds) {
-		// add a new entry into the table
-		PXCHandData::FingerData fingerData;
-		// declare a new hand
-		Hand h;
-
-		for (int f = 0; f < 5; f++) {
-			if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
-				// fill the hand struct
-				switch (f){
-				case 1:
-					h.f1 = fingerData;
-					break;
-				case 2:
-					h.f2 = fingerData;
-					break;
-				case 3:
-					h.f3 = fingerData;
-					break; 
-				case 4:
-					h.f4 = fingerData;
-					break;
-				case 5:
-					h.f5 = fingerData;
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		// add the current hand to te handVector
-		handVector.push_back(h);
+	if (firstFrame == 0) {
+		start = time(0);
 	}
 
-	//Declare handData to store the content of handVector
-	const int vecSize = handVector.size();
-	PXCHandData::FingerData handData[1000][5];
-
-	// store the content of handVector into handData array
-	for (int i = 0; i < vecSize; i++) {
-		for (int f = 0; f < 5; f++) {
-			switch (f) {
-			case 1:
-				handData[i][f] = handVector.at(i).f1;
-				break;
-			case 2:
-				handData[i][f] = handVector.at(i).f2;
-				break;
-			case 3:
-				handData[i][f] = handVector.at(i).f3;
-				break;
-			case 4:
-				handData[i][f] = handVector.at(i).f4;
-				break;
-			case 5:
-				handData[i][f] = handVector.at(i).f5;
-				break;
-			default:
-				break;
-			}
+	// add a new entry into the table
+	PXCHandData::FingerData fingerData;
+	for (int f = 0; f < 5; f++) {
+		if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
+			handData[nbFrame][f] = fingerData;
 		}
 	}
+	// add the coordinates of the mass center into the table
+	massCenterCoordinates[nbMassCenter] = hand->QueryMassCenterWorld();
+	nbFrame++;
+	nbMassCenter++;
 
-	avg = calculateAverage(handData, vecSize);
+	if (difftime(start, time(0)) >= 3.0) {
+		trajectories.push_back(analyseMovement(nbMassCenter));
+		nbGesture++;
+		firstFrame = 0;
+		nbMassCenter = 0;
+	}
 
-	return avg;
+	if (nbGesture < 3) {
+		Debugger::info("Répéter le même geste");
+	}
+
+	if (nbGesture == 3) {
+		//moyenne des 3 gestes du vecteur contenant les 3 gestes
+		avg = calculateAverage(handData, nbFrame);
+
+		trajectory = averageTrajectory(trajectories);
+		readSymbol = avg | (trajectory << 10);
+
+		nbGesture = 0;
+		completeGesture.push_back(readSymbol);
+		currentGestComposee++;
+		//TODO : affichage utilisateur et confirmation et indication on passe au geste suivant
+
+		//TODO : passer nbGestComposee en paramètre de la classe/fonction (donnée par l'utilisateur) (à faire par matthieu)
+		//if (currentGestComposee == nbGestComposee) {
+		//Sauvegarder les gestes composees 
+		//TODO : changer le parseur afin qu'il sache lire/écrire un long d'un geste dynamique et appeller cette fonction sur le long readSymbol										
+		//TODO : faire un vecteur de paire de string de long avec completeGesture et la signification : edwin
+		//currentGestComposee = 0;
+
+		//learning = false;
+	}
+	return readSymbol;
 }
 
-uint32_t HandTools::calculateAverageSec(PXCHandData::IHand *hand, double nbSeconds, int nbRepeat) {
-	int i;
-	vector<uint32_t> recGestures;
+uint8_t HandTools::averageTrajectory(vector<uint8_t> trajectories) {
+	uint8_t t0 = trajectories.at(0);
+	uint8_t t1 = trajectories.at(1);
+	uint8_t t2 = trajectories.at(2);
 
-	for (i = 0; i < nbRepeat; i++) {
-		recGestures.push_back(HandTools::gestureCaptureSec(hand, nbSeconds));
+	if (t0 == t1) {
+		return t0;
 	}
-}*/
+	if (t0 == t2) {
+		return t0;
+	}
+	if (t1 == t2) {
+		return t1;
+	}
+
+	// if the trajectories are all different, return the last one
+	return t2;
+}

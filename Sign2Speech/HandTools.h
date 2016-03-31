@@ -30,7 +30,7 @@ private :
 	int nbReadFrameLeft = 0;
 	PXCHandData::FingerData rightHandData[1000][5];
 	PXCHandData::FingerData leftHandData[1000][5];
-	PXCPoint3DF32 massCenterCoordinates[MAXFRAME];
+	PXCPoint3DF32 massCenterCoordinates[1000];
 	const uint32_t unite = 0b1;
 
 	uint64_t frameCounter = 0;
@@ -40,6 +40,18 @@ private :
 	uint32_t metal = 0b1000001000;
 
 	void printBinary(uint32_t a, int nbBits);
+
+	int nbGesture = 0;
+	int firstFrame = 0;
+	int nbFrame = 0;
+	int currentGestComposee = 0;
+	// 3) le vecteur de taille fournie par l'utilisateur (nbGestes) qui contient les différents gestes intermediaires
+	//		et qui recomposent le geste final
+	vector<long> completeGesture;
+
+	PXCHandData::FingerData handData[1000][5];
+
+	time_t start;
 
 public :
 
@@ -53,9 +65,9 @@ public :
 
 	long analyseGesture(PXCHandData::IHand *hand);
 
-	uint8_t analyseMovement();
+	uint8_t analyseMovement(int nbFrame);
 
-	bool isStatic(uint8_t *out);
+	bool isStatic(uint8_t *out, int nbFrame);
 
 	bool isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf);
 
@@ -63,13 +75,13 @@ public :
 
 	bool isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out);
 
-	bool isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out);
+	bool isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out, int nbFrame);
 
 	void printFold(PXCHandData::IHand *hand);
 
-	uint32_t gestureCaptureSec(PXCHandData::IHand *hand, double nbSeconds);
+	long analyseXGestures(PXCHandData::IHand* hand);
 
-	uint32_t calculateAverageSec(PXCHandData::IHand *hand, double nbSeconds, int nbRepeat);
+	uint8_t averageTrajectory(vector<uint8_t> trajectories);
 };
 
 
