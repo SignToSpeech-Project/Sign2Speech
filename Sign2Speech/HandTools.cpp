@@ -2,6 +2,10 @@
 #include "HandTools.h"
 #include "ThreadHandTools.h"
 
+int diffMilliseconds(SYSTEMTIME t1, SYSTEMTIME t2) {
+	return ((t2.wMinute * 60000 + t2.wSecond * 1000 + t2.wMilliseconds) - (t1.wMinute * 60000 + t1.wSecond * 1000 + t1.wMilliseconds));
+}
+
 void HandTools::printBinary(uint32_t a, int nbBits) {
 	for (int b = nbBits; b >= 0; b--) {
 		printf("%d", (a >> b) & 0x1);
@@ -123,11 +127,10 @@ uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[1000][5], 
 		}
 
 		vector<uint32_t> vResult = this->removeOutValues(v);
-
+		if (vResult.size() == 0) vResult = v;
 		for (vector<uint32_t>::iterator it = vResult.begin(); it != vResult.end(); ++it) {
 			sumFold += (*it);
 		}
-		if (vResult.size() == 0) vResult = v;
 		sumFold /= vResult.size();
 
 		if (sumFold < 50) {
@@ -176,7 +179,20 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		break;
 	}
 
+	if (*nbReadFrame == 0) {
+		GetSystemTime(&gestureStart);
+	}
+
 	if (*nbReadFrame < MAXFRAME) {
+
+		// empty the hand array if at least 250ms has passed
+		SYSTEMTIME currentTime;
+		GetSystemTime(&currentTime);
+		if (diffMilliseconds(currentTime, gestureStart) >= 250) {
+			GetSystemTime(&gestureStart);
+			*nbReadFrame = 0;
+		}
+
 		// add a new entry into the table
 		PXCHandData::FingerData fingerData;
 		for (int f = 0; f < 5; f++) {
@@ -198,35 +214,6 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		printf("[%ld]\t", frameCounter);
 		printBinary(average, 17);
 		printf("\n");
-		//std::printf("\n");
-
-		/*if (isGesture(average, fist, 1, 2)) {
-			std::printf("[%ld]\t\t %s FIST\n", frameCounter, sideStr.c_str());
-			ThreadHandTools::webSock->send("{\"content\":\"Fist\"}");
-			if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
-				ThreadHandTools::webSock->poll();
-				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
-			}
-		}
-
-		if (isGesture(average, victory, 1, 2)) {
-			std::printf("[%ld]\t\t %s VICTORY\n", frameCounter, sideStr.c_str());
-			ThreadHandTools::webSock->send("{\"content\":\"Victory\"}");
-			if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
-				ThreadHandTools::webSock->poll();
-				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
-			}
-		}
-
-		if (isGesture(average, metal, 1, 2)) {
-			std::printf("[%ld]\t\t %s METAL\n", frameCounter, sideStr.c_str());
-			ThreadHandTools::webSock->send("{\"content\":\"Metal\"}");
-			if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
-				ThreadHandTools::webSock->poll();
-				ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
-			}
-		}*/
-		//TODO : déplacer les envois au serveur/application de sous titrage dans les TODO affichage de la classe threaddictionary
 		return average;
 	}
 	return -1;

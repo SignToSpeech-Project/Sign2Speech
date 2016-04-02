@@ -50,6 +50,7 @@ private :
 	PXCHandData::FingerData handData[1000][5];
 
 	time_t start;
+	SYSTEMTIME gestureStart;
 
 	bool learning = false;
 
