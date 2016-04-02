@@ -88,7 +88,8 @@ Node* Node::getChildren(long s) {
 		if (((*it)->symbol == s)) { //Optimisation because we already found the exact symbol
 			return (*it);
 		}
-		tempScore = scoreFingers(s, (*it)->symbol);
+		tempScore = 
+			scoreFingers(s, (*it)->symbol);
 		if (tempScore < score) {
 			score = tempScore;
 			tempNode = (*it);

@@ -14,7 +14,10 @@ void HandTools::printBinary(uint32_t a, int nbBits) {
 
 int HandTools::calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step) {
 	int dist = 0;
-	uint32_t one = (~(0b0)) >> (32 - step);
+	uint32_t one = 0x0;
+	for (int i = 0; i < step; i++) {
+		one = one << 1 | 0b1;
+	}
 	for (int i = 0; i < nBit / step; i++) {
 		if (((a >> (step * i)) & one) != ((b >> (step * i)) & one)) {
 			dist++;
@@ -113,6 +116,32 @@ vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
 	return result;
 }
 
+uint32_t handToInt(PXCHandData::IHand *hand) {
+	PXCHandData::FingerData fingerData;
+	uint32_t avg = 0x0;
+	for (int f = 0; f < 5; f++) {
+		if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
+			if (fingerData.foldedness < 50) {
+				if (fingerData.foldedness < 25) {
+					avg |= (0b00 << (2 * f));
+				}
+				else {
+					avg |= (0b01 << (2 * f));
+				}
+			}
+			else if (fingerData.foldedness >= 50) {
+				if (fingerData.foldedness < 75) {
+					avg |= (0b10 << (2 * f));
+				}
+				else {
+					avg |= (0b11 << (2 * f));
+				}
+			}
+		}
+	}
+	return avg;
+}
+
 
 
 uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[1000][5], int length) {
@@ -179,6 +208,8 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		break;
 	}
 
+	bool writeAllowed = true;
+
 	if (*nbReadFrame == 0) {
 		GetSystemTime(&gestureStart);
 	}
@@ -193,16 +224,35 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 			*nbReadFrame = 0;
 		}
 
-		// add a new entry into the table
-		PXCHandData::FingerData fingerData;
-		for (int f = 0; f < 5; f++) {
-			if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
-				handData[*nbReadFrame][f] = fingerData;
+		// check if the previous set of frames is not two different from the new frame 
+		// each 5 frames
+		if (*nbReadFrame % 5 == 0 && *nbReadFrame != 0) {
+			uint32_t avgTmp = calculateAverage(handData, *nbReadFrame);
+			if (calculateHammingDistance(avgTmp, handToInt(hand), 10, 2) >= 3) {
+				if (*nbReadFrame < (MAXFRAME / 3)) {
+					// remove all the previous gesture
+					printf("remove\n");
+					*nbReadFrame = 0;
+				}
+				//else if (*nbReadFrame > 2*(MAXFRAME / 3)) {
+				//	// we only keep the previous gesture
+				//	
+				//}
 			}
 		}
-		// add the coordinates of the mass center into the table
-		massCenterCoordinates[*nbReadFrame] = hand->QueryMassCenterWorld();
-		(*nbReadFrame)++;
+
+		if (writeAllowed) {
+			// add a new entry into the table
+			PXCHandData::FingerData fingerData;
+			for (int f = 0; f < 5; f++) {
+				if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
+					handData[*nbReadFrame][f] = fingerData;
+				}
+			}
+			// add the coordinates of the mass center into the table
+			massCenterCoordinates[*nbReadFrame] = hand->QueryMassCenterWorld();
+			(*nbReadFrame)++;
+		}
 	}
 	else {
 		*nbReadFrame = 0;
