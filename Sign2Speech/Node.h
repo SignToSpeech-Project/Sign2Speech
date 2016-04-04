@@ -18,7 +18,7 @@ private:
 	long symbol;
 	string word;
 
-	int scoreFingers(long s1, long s2); //Return the amount of difference of the fingers between 2 symbols
+	int scoreGeasture(long s1, long s2); //Return the amount of difference of the fingers between 2 symbols
 
 public:
 

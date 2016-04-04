@@ -2,7 +2,7 @@
 
 WebSocket::pointer ThreadHandTools::webSock = NULL;
 
-ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
+ThreadHandTools::ThreadHandTools(mutex *mBR, mutex *mBW, mutex *mSS, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r, bool *sS) : ThreadApp(mBR, mBW, mSS, pg, bR, bW, sS) {
 	address = ad;
 	room = r;
 }
@@ -106,8 +106,6 @@ void ThreadHandTools::run() {
 		{
 			Debugger::info("\nPXCSenseManager Initializing OK\n========================\n");
 
-			mProgram_on->lock();
-
 			int currentGesture = 0;
 			int firstFrame = 0;
 			int currentGestComposee = 0;
@@ -148,7 +146,13 @@ void ThreadHandTools::run() {
 			// Acquiring frames from input device
 			while ((ct.getSenseManager())->AcquireFrame(true) == PXC_STATUS_NO_ERROR && (*program_on))
 			{
-				mProgram_on->unlock();
+				if (*symbolSent) {
+					Sleep(500);
+					mSymbolSent->lock();
+					*symbolSent = false;
+					mSymbolSent->unlock();
+				}
+
 				// Get current hand outputs
 				if (g_handDataOutput->Update() == PXC_STATUS_NO_ERROR)
 				{
@@ -228,9 +232,7 @@ void ThreadHandTools::run() {
 
 				} // end if update
 				(ct.getSenseManager())->ReleaseFrame();
-				mProgram_on->lock();
 			} // end while acquire frame
-			mProgram_on->unlock();
 		} // end if Init
 
 		else

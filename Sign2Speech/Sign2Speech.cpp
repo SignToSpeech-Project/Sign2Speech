@@ -14,9 +14,11 @@ bool program_on = true; // =off : End of the program
 std::mutex mProgram_on;
 std::mutex mBufferR; //Buffer of which symbols the user is currently doing (Default mod of the program)
 std::mutex mBufferW; //Buffer of symbols chain you need to add to the dictionary ( Learning mod ON)
+std::mutex mSymbolSent;
 
 vector<long> bufferRead;
 vector<vector<pair<string, long>>> bufferWrite;
+bool symbolSent = false;
 
 char *address = "localhost:9000";
 char *room = "test";
@@ -28,14 +30,14 @@ bool waitForClosure = true;
 
 //Thread managing the Dictionary
 void threadDico() {
-	ThreadDictionary d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite);
+	ThreadDictionary d(&mBufferR, &mBufferW, &mSymbolSent, &program_on, &bufferRead, &bufferWrite, &symbolSent);
 	d.run();
 }
 
 
 //Thread managing the camera and the gestures recognization
 void threadHandTool() {
-	ThreadHandTools d(&mProgram_on, &mBufferR, &mBufferW, &program_on, &bufferRead, &bufferWrite, address, room);
+	ThreadHandTools d( &mBufferR, &mBufferW, &mSymbolSent, &program_on, &bufferRead, &bufferWrite, address, room, &symbolSent);
 	d.run();
 }
 

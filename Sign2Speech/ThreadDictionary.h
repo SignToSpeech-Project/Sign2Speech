@@ -6,7 +6,7 @@
 
 class ThreadDictionary : public ThreadApp {
 public:
-	ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW);
+	ThreadDictionary(mutex *mBR, mutex *mBW, mutex *mSS, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, bool *sS);
 
 	void run();
 };

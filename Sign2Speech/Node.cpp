@@ -46,7 +46,7 @@ bool Node::isPresent(long s) {
 
 //Return the amount of difference of the fingers between 2 symbols
 
-int Node::scoreFingers(long s1, long s2) {
+int Node::scoreGeasture(long s1, long s2) {
 	int nbdif = 0;
 	int eg = 0;
 	int em = 0;
@@ -74,6 +74,77 @@ int Node::scoreFingers(long s1, long s2) {
 		}
 
 	}
+
+	int trajectorie1 = (s1 >> 11) & 0b11111111;
+	int trajectorie2 = (s2 >> 11) & 0b11111111;
+
+	//Checking if we have a static geasture
+	if ( (trajectorie1 == 0) || (trajectorie2 == 0) ) {
+		if (trajectorie1 != trajectorie2) {
+			eg++;
+			nbdif++;
+		}
+	}
+
+	//Else, checking trajectories
+	else {
+		int t11 = (s1 >> 11) & 0b1;
+		int t21 = (s2 >> 11) & 0b1;
+		int t12 = (s1 >> 12) & 0b1;
+		int t22 = (s2 >> 12) & 0b1;
+		int t13 = (s1 >> 13) & 0b1;
+		int t23 = (s2 >> 13) & 0b1;
+		int t14 = (s1 >> 14) & 0b1;
+		int t24 = (s2 >> 14) & 0b1;
+		int t17 = (s1 >> 17) & 0b1;
+		int t27 = (s2 >> 17) & 0b1;
+		int t18 = (s1 >> 18) & 0b1;
+		int t28 = (s2 >> 18) & 0b1;
+
+
+		if ((t11 == 1 && t22 == 1) || (t12 == 1 && t21 == 1)) {
+			em++;
+			nbdif++;
+		}
+
+		if ((t13 == 1 && t24 == 1) || (t14 == 1 && t23 == 1)) {
+			em++;
+			nbdif++;
+		}
+
+		if ((((t11 == 1) || (t12 == 1) || (t13 == 1) || (t14 == 1)) && ((t27 == 1) || (t28 == 1)))
+			|| (((t21 == 1) || (t22 == 1) || (t23 == 1) || (t24 == 1)) && ((t17 == 1) || (t18 == 1)))) {
+			eg++;
+			nbdif++;
+		}
+
+		if ((t11 == 1 && t23 == 1) || (t13 == 1 && t21 == 1)) {
+			es++;
+			nbdif++;
+		}
+
+		if ((t11 == 1 && t24 == 1) || (t14 == 1 && t21 == 1)) {
+			es++;
+			nbdif++;
+		}
+
+		if ((t12 == 1 && t23 == 1) || (t13 == 1 && t22 == 1)) {
+			es++;
+			nbdif++;
+		}
+
+		if ((t12 == 1 && t24 == 1) || (t14 == 1 && t22 == 1)) {
+			es++;
+			nbdif++;
+		}
+
+		if ((t17 == 1 && t28 == 1) || (t18 == 1 && t27 == 1)) {
+			em++;
+			nbdif++;
+		}
+	}
+	
+
 	return 10 * eg + 3 * em + es + nbdif;
 }
 
@@ -89,7 +160,7 @@ Node* Node::getChildren(long s) {
 			return (*it);
 		}
 		tempScore = 
-			scoreFingers(s, (*it)->symbol);
+			scoreGeasture(s, (*it)->symbol);
 		if (tempScore < score) {
 			score = tempScore;
 			tempNode = (*it);

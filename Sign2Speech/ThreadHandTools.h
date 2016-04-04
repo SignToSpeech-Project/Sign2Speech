@@ -27,8 +27,9 @@ private :
 
 	char *address;
 	char *room;
+
 public:
-	ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r);
+	ThreadHandTools(mutex *mBR, mutex *mBW, mutex *mSS, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, char *ad, char *r, bool *sS);
 
 	static WebSocket::pointer webSock;
 

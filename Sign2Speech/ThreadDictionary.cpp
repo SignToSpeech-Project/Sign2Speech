@@ -1,7 +1,7 @@
 #include "ThreadDictionary.h"
 #include "ThreadHandTools.h"
 
-ThreadDictionary::ThreadDictionary(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW) : ThreadApp(mP, mBR, mBW, pg, bR, bW) {
+ThreadDictionary::ThreadDictionary(mutex *mBR, mutex *mBW, mutex *mSS, bool* pg, vector<long>* bR, vector<vector<pair<string, long>>>* bW, bool *sS) : ThreadApp(mBR, mBW, mSS, pg, bR, bW, sS) {
 }
 
 void ThreadDictionary::run() {
@@ -25,27 +25,30 @@ void ThreadDictionary::run() {
 
 	time_t start = time(0);
 
-	mProgram_on->lock();
 	while (*program_on) {
-		mProgram_on->unlock();
 
 
-		mBufferW->lock();
+
 		if (bufferWrite->size() != 0) { //Update Dico
+			mBufferW->lock();
 			vector<vector<pair<string, long>>>::iterator it = bufferWrite->begin(); 
 			d.insertList((*it));
 			bufferWrite->erase(it);
+			mBufferW->unlock();
 			
 		}
-		mBufferW->unlock();
+
 
 		double seconds_since_start = difftime(time(0), start);
-		if (seconds_since_start > 5) { //TIMEOUT
+		if (seconds_since_start > 2) { //TIMEOUT
 			string currentSymbol = d.refreshDictionary();
-			Debugger::debug("Refresh dictionary");
+			//Debugger::debug("Refresh dictionary");
 			if ((currentSymbol != "") && (currentSymbol != "0x1 : racine")) {
 				Debugger::info("Sending: " + currentSymbol);
 				ThreadHandTools::webSock->send("{\"content\":\""+ currentSymbol +"\"}");
+				mSymbolSent->lock();
+				*symbolSent = true;
+				mSymbolSent->unlock();
 				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
 					ThreadHandTools::webSock->poll();
 					ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
@@ -54,16 +57,20 @@ void ThreadDictionary::run() {
 			start = time(0);
 		}
 
-		mBufferR->lock();
+
 		if (bufferRead->size() != 0) { //Get CurrentSymbol
+			mBufferR->lock();
 			vector<long>::iterator it = bufferRead->begin();
 			string currentSymbol = d.read(*it);
 			std:stringstream out;
 			out << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
 			Debugger::debug(out.str());
-			if ((currentSymbol.find("0x0 : Not final word") == std::string::npos) && (currentSymbol != "0x1 : racine") && (currentSymbol != "")) {
+			if (!(currentSymbol.find("0x0 : Not final word") == std::string::npos) && (currentSymbol != "0x1 : racine") && (currentSymbol != "")) {
 				Debugger::info("Sending: " + currentSymbol);
 				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");
+				mSymbolSent->lock();
+				*symbolSent = true;
+				mSymbolSent->unlock();
 				if (ThreadHandTools::webSock->getReadyState() != WebSocket::CLOSED) {
 					ThreadHandTools::webSock->poll();
 					ThreadHandTools::webSock->dispatch(ThreadHandTools::handle_message);
@@ -71,12 +78,13 @@ void ThreadDictionary::run() {
 			}
 			bufferRead->erase(it);
 			start = time(0);
+			mBufferR->unlock();
 		}
-		mBufferR->unlock();
 
-		mProgram_on->lock();
+
+
 	}
-	mProgram_on->unlock();
+
 
 	//Sauvegarde Dico-------------------------------------------------------------------------
 
