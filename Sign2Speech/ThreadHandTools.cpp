@@ -8,10 +8,9 @@ ThreadHandTools::ThreadHandTools(mutex* mP, mutex *mBR, mutex *mBW, bool* pg, ve
 }
 
 void ThreadHandTools::handle_message(const std::string & message) {
-	printf(">>> %s\n", message.c_str());
-	//if (message == "world") {
-	//	ThreadHandTools::webSock->close();
-	//}
+	std::stringstream out;
+	out << ">>> " << message;
+	Debugger::debug(out.str());
 }
 
 void ThreadHandTools::run() {
@@ -39,12 +38,6 @@ void ThreadHandTools::run() {
 		//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 		HandTools h;
-
-		/*if (argc < 2)
-		{
-			Definitions::WriteHelpMessage();
-			return;
-		}*/
 
 		// Setup
 		ct.setSession(PXCSession::CreateInstance());
@@ -92,20 +85,6 @@ void ThreadHandTools::run() {
 			Debugger::error("Failed Creating PXCHandConfiguration");
 			return;
 		}
-
-		// Iterating input parameters
-		//for (int i = 1; i < argc; i++)
-		//{
-		//	if (strcmp(argv[i], "-skeleton") == 0)
-		//	{
-		//		//std::printf("-Skeleton Information Enabled-\n");
-		//		g_skeleton = true;
-		//	}
-		//}
-
-
-		// TODO remove it
-		g_skeleton = true;
 
 		g_handConfiguration->EnableStabilizer(true);
 		g_handConfiguration->SetTrackingMode(PXCHandData::TRACKING_MODE_FULL_HAND);
@@ -174,80 +153,76 @@ void ThreadHandTools::run() {
 				if (g_handDataOutput->Update() == PXC_STATUS_NO_ERROR)
 				{
 
-					// Display joints
-					if (g_skeleton)
+					PXCHandData::IHand *hand;
+					for (int i = 0; i < g_handDataOutput->QueryNumberOfHands(); ++i)
 					{
-						PXCHandData::IHand *hand;
-						for (int i = 0; i < g_handDataOutput->QueryNumberOfHands(); ++i)
-						{
-							g_handDataOutput->QueryHandData(PXCHandData::ACCESS_ORDER_BY_TIME, i, hand);
-							std::string handSide = "Unknown Hand";
-							handSide = hand->QueryBodySide() == PXCHandData::BODY_SIDE_LEFT ? "Left Hand" : "Right Hand";
-							//std::printf("%s\n==============\n", handSide.c_str());
-							//printFold(hand);
+						g_handDataOutput->QueryHandData(PXCHandData::ACCESS_ORDER_BY_TIME, i, hand);
+						std::string handSide = "Unknown Hand";
+						handSide = hand->QueryBodySide() == PXCHandData::BODY_SIDE_LEFT ? "Left Hand" : "Right Hand";
+						//std::printf("%s\n==============\n", handSide.c_str());
+						//printFold(hand);
 
-							// normal recognition mode
-							if (learning == false) {
-								long symbol = h.analyseGesture(hand);
-								if ((symbol != -1) && (symbol != lastSymbolRead)) {
-									mBufferR->lock();
-									bufferRead->push_back(symbol);
-									mBufferR->unlock();
-									lastSymbolRead = symbol;  //Allow the user to keep for example his "fist" gesture during some seconds without changing the dictionary reading level
+						// normal recognition mode
+						if (learning == false) {
+							long symbol = h.analyseGesture(hand);
+							if ((symbol != -1) && (symbol != lastSymbolRead)) {
+								mBufferR->lock();
+								bufferRead->push_back(symbol);
+								mBufferR->unlock();
+								lastSymbolRead = symbol;  //Allow the user to keep for example his "fist" gesture during some seconds without changing the dictionary reading level
+							}
+						}
+						// learning mode
+						else if (learning == true) {
+							long symbol = h.analyseXGestures(hand);
+							if (symbol != -1) {
+								if (h.getLearning()) {
+									learning = false;
+									pair<string, long> temp(nomMotCompose, symbol);
+									learningGest.push_back(temp);
+									mBufferW->lock();
+									bufferWrite->push_back(learningGest);
+									mBufferW->unlock();
+									learningGest.clear();
+
+									Debugger::info("------------------------MOT ENREGISTRE------------------------");
+									Sleep(2000);
+									Debugger::info("Voulez vous entrer un nouveau mot ? o/n");
+									string answer;
+									cin >> answer;
+									if ((answer == "o") || (answer == "O")) {
+
+										learning = true;
+										int nbmc;
+										string nmc;
+										Debugger::info("Veuilez entre la signification du geste :");
+										cin >> nmc;
+										Debugger::info("Veuilez entre le nombre de gestes à faire :");
+										cin >> nbmc;
+
+										nbMotCompose = nbmc;
+										nomMotCompose = nmc;
+
+										h.learningMode(nbmc);
+
+									}
+									else Debugger::info("------------------------PASSAGE EN MODE RECONNAISSANCE DE GESTES------------------------");
+								}
+								else {
+									pair<string, long> temp("", symbol);
+									learningGest.push_back(temp);
+									cpt_Geasture++;
+									string msg = "------------------------PREPAREZ VOUS POUR VOTRE GESTE N°" + to_string(cpt_Geasture) + " DANS 5 SECONDES------------------------";
+									Debugger::info(msg);
+									for (int i = 5; i > 0; i--) {
+										Debugger::info(to_string(i));
+										Sleep(1000);
+									}
+									Debugger::info("-------------------------------Faites votre geste MAINTENANT pendant 3 secondes-------------------------------");
 								}
 							}
-							// learning mode
-							else if (learning == true) {
-								long symbol = h.analyseXGestures(hand);
-								if (symbol != -1) {
-									if (h.getLearning()) {
-										learning = false;
-										pair<string, long> temp(nomMotCompose, symbol);
-										learningGest.push_back(temp);
-										mBufferW->lock();
-										bufferWrite->push_back(learningGest);
-										mBufferW->unlock();
-										learningGest.clear();
 
-										Debugger::info("------------------------MOT ENREGISTRE------------------------");
-										Sleep(2000);
-										Debugger::info("Voulez vous entrer un nouveau mot ? o/n");
-										string answer;
-										cin >> answer;
-										if ((answer == "o") || (answer == "O")) {
-
-											learning = true;
-											int nbmc;
-											string nmc;
-											Debugger::info("Veuilez entre la signification du geste :");
-											cin >> nmc;
-											Debugger::info("Veuilez entre le nombre de gestes à faire :");
-											cin >> nbmc;
-
-											nbMotCompose = nbmc;
-											nomMotCompose = nmc;
-
-											h.learningMode(nbmc);
-
-										}
-										else Debugger::info("------------------------PASSAGE EN MODE RECONNAISSANCE DE GESTES------------------------");
-									}
-									else {
-										pair<string, long> temp("", symbol);
-										learningGest.push_back(temp);
-										cpt_Geasture++;
-										string msg = "------------------------PREPAREZ VOUS POUR VOTRE GESTE N°" + to_string(cpt_Geasture) + " DANS 5 SECONDES------------------------";
-										Debugger::info(msg);
-										for (int i = 5; i > 0; i--) {
-											Debugger::info(to_string(i));
-											Sleep(1000);
-										}
-										Debugger::info("-------------------------------Faites votre geste MAINTENANT pendant 3 secondes-------------------------------");
-									}
-								}
-
-								//learning = false;
-							}
+							//learning = false;
 						}
 					}
 

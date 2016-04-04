@@ -16,7 +16,6 @@ private :
 	PXCHandData *g_handDataOutput;
 	PXCHandConfiguration *g_handConfiguration;
 
-	bool g_skeleton = false; // Writing skeleton data (22 joints) to console ouput
 	bool g_stop = false; // user closes application
 
 	bool learning = false; // learning mode or not

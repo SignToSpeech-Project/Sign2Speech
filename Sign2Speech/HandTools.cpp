@@ -188,21 +188,25 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 
 	PXCHandData::BodySideType side = hand->QueryBodySide();
 	int *nbReadFrame;
+	int *nbFrame;
 	PXCHandData::FingerData(*handData)[5];
 	string sideStr = "";
 	switch (side) {
 	case PXCHandData::BodySideType::BODY_SIDE_LEFT:
 		nbReadFrame = &nbReadFrameLeft;
+		nbFrame = &nbFrameLeft;
 		handData = leftHandData;
 		sideStr = "LEFT";
 		break;
 	case PXCHandData::BodySideType::BODY_SIDE_RIGHT:
 		nbReadFrame = &nbReadFrameRight;
+		nbFrame = &nbFrameRight;
 		handData = rightHandData;
 		sideStr = "RIGHT";
 		break;
 	default:
 		nbReadFrame = &nbReadFrameRight;
+		nbFrame = &nbFrameRight;
 		handData = rightHandData;
 		sideStr = "RIGHT";
 		break;
@@ -210,11 +214,11 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 
 	bool writeAllowed = true;
 
-	if (*nbReadFrame == 0) {
+	if (*nbFrame == 0) {
 		GetSystemTime(&gestureStart);
 	}
 
-	if (*nbReadFrame < MAXFRAME) {
+	if (*nbFrame < MAXFRAME) {
 
 		// empty the hand array if at least 250ms has passed
 		SYSTEMTIME currentTime;
@@ -222,22 +226,26 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		if (diffMilliseconds(currentTime, gestureStart) >= 250) {
 			GetSystemTime(&gestureStart);
 			*nbReadFrame = 0;
+			*nbFrame = 0;
 		}
 
-		// check if the previous set of frames is not two different from the new frame 
+		// check if the previous set of frames is not too different from the new frame 
 		// each 5 frames
-		if (*nbReadFrame % 5 == 0 && *nbReadFrame != 0) {
+		if ((*nbFrame) % 5 == 0 && (*nbFrame) != 0) {
 			uint32_t avgTmp = calculateAverage(handData, *nbReadFrame);
 			if (calculateHammingDistance(avgTmp, handToInt(hand), 10, 2) >= 3) {
 				if (*nbReadFrame < (MAXFRAME / 3)) {
 					// remove all the previous gesture
-					printf("remove\n");
+					Debugger::debug("Remove the previous gesture");
 					*nbReadFrame = 0;
+					*nbFrame = 0;
 				}
-				//else if (*nbReadFrame > 2*(MAXFRAME / 3)) {
-				//	// we only keep the previous gesture
-				//	
-				//}
+				else if (*nbReadFrame > 2*(MAXFRAME / 3)) {
+					// we only keep the previous gesture
+					Debugger::debug("Only keep the previous gesture");
+					writeAllowed = false;
+					(*nbFrame)++;
+				}
 			}
 		}
 
@@ -253,17 +261,19 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 			massCenterCoordinates[*nbReadFrame] = hand->QueryMassCenterWorld();
 			(*nbReadFrame)++;
 		}
+		(*nbFrame)++;
 	}
 	else {
-		*nbReadFrame = 0;
-
-		uint32_t average = calculateAverage(handData, MAXFRAME);
-		uint8_t movement = analyseMovement(MAXFRAME);
+		uint32_t average = calculateAverage(handData, min(MAXFRAME, *nbReadFrame));
+		uint8_t movement = analyseMovement(min(MAXFRAME, *nbReadFrame));
 		average |= movement << 10;
 
 		printf("[%ld]\t", frameCounter);
 		printBinary(average, 17);
 		printf("\n");
+
+		*nbReadFrame = 0;
+		*nbFrame = 0;
 		return average;
 	}
 	return -1;

@@ -28,6 +28,8 @@ private :
 
 	int nbReadFrameRight = 0;
 	int nbReadFrameLeft = 0;
+	int nbFrameRight = 0;
+	int nbFrameLeft = 0;
 	int nbMassCenter = 0;
 	PXCHandData::FingerData rightHandData[1000][5];
 	PXCHandData::FingerData leftHandData[1000][5];
