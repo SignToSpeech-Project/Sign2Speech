@@ -65,7 +65,7 @@ void ThreadDictionary::run() {
 			std:stringstream out;
 			out << "Reading : " << (*it) << " Signification : " << currentSymbol << endl;
 			Debugger::debug(out.str());
-			if (!(currentSymbol.find("0x0 : Not final word") == std::string::npos) && (currentSymbol != "0x1 : racine") && (currentSymbol != "")) {
+			if ((currentSymbol.find("0x0 : Not final word") == std::string::npos) && (currentSymbol != "0x1 : racine") && (currentSymbol != "")) {
 				Debugger::info("Sending: " + currentSymbol);
 				ThreadHandTools::webSock->send("{\"content\":\"" + currentSymbol + "\"}");
 				mSymbolSent->lock();
