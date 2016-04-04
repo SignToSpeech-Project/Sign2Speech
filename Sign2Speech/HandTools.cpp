@@ -564,12 +564,12 @@ long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
 			/*std::stringstream out;
 			out << ;
 			Debugger::info(out.str());*/
-			Debugger::info("-------------------------------Répéter le même geste dans 5 secondes-------------------------------");
+			Debugger::info("-------------------------------Repeter le meme geste dans 5 secondes-------------------------------");
 			for (int i = 5; i > 0; i--) {
 				Debugger::info(to_string(i));
 				Sleep(1000);
 			}
-			Debugger::info("-------------------------------Répéter le même geste MAINTENANT-------------------------------");
+			Debugger::info("-------------------------------Repeter le meme geste MAINTENANT-------------------------------");
 		}
 
 		else {

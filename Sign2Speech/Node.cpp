@@ -11,7 +11,7 @@ Node* Node::addNode(string w, long s) {
 	for (vector<Node *>::iterator it = childrens.begin(); it != childrens.end(); ++it)
 	{
 		if (((*it)->symbol == s)) {
-			(*it)->word = w;
+			if( w != "" ) (*it)->word = w;
 			return (*it);
 		}
 	}

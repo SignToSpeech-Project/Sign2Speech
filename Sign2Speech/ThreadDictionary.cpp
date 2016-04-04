@@ -8,7 +8,7 @@ void ThreadDictionary::run() {
 	//Initialisation Dico-------------------------------------------------------------------------
 	Dictionary d;
 
-	Parser p("examples/example.json");
+	Parser p("output.json");
 
 	// vector of vector used to store all the pairs
 	vector< vector< pair<string, long> > > res;
