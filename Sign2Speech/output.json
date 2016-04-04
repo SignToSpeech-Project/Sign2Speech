@@ -53,18 +53,18 @@
 			"gesture": "0x000003ff"
 		}
 	],
-	"Africa": [
+	"Test3GestesStatiques": [
 		{
 			"word": "",
 			"gesture": "0x000003ff"
 		},
 		{
 			"word": "",
-			"gesture": "0x00002155"
+			"gesture": "0x0000000c"
 		},
 		{
-			"word": "Africa",
-			"gesture": "0x00000000"
+			"word": "Test3GestesStatiques",
+			"gesture": "0x00000002"
 		}
 	]
 }

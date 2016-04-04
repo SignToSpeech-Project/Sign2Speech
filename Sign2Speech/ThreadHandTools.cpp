@@ -139,7 +139,7 @@ void ThreadHandTools::run() {
 			time_t start;
 			int cpt_Geasture = 1;
 
-			Debugger::info("Voulez vou ajouter des mots au dictionnaire ? o/n");
+			Debugger::info("Voulez vous ajouter des mots au dictionnaire ? o/n");
 			string answer;
 			cin >> answer;
 			if ((answer == "o") || (answer == "O")) {
@@ -147,9 +147,9 @@ void ThreadHandTools::run() {
 				learning = true;
 				int nbmc;
 				string nmc;
-				Debugger::info("Veuilez entre la signification du geste :");
+				Debugger::info("Veuillez entrer la signification du geste :");
 				cin >> nmc;
-				Debugger::info("Veuilez entre le nombre de gestes à faire :");
+				Debugger::info("Veuillez entrer le nombre de gestes a faire :");
 				cin >> nbmc;
 
 				nbMotCompose = nbmc;
@@ -157,7 +157,7 @@ void ThreadHandTools::run() {
 
 				h.learningMode(nbmc);
 
-				Debugger::info("Le learning commence dans 5 secondes, soyez prêt");
+				Debugger::info("Le learning commence dans 5 secondes, preparez-vous : ");
 				for (int i = 5; i > 0; i--) {
 					Debugger::info(to_string(i));
 					Sleep(1000);
@@ -200,7 +200,7 @@ void ThreadHandTools::run() {
 							else if (learning == true) {
 								long symbol = h.analyseXGestures(hand);
 								if (symbol != -1) {
-									if (h.getLearning()) {
+									if (!h.getLearning()) {
 										learning = false;
 										pair<string, long> temp(nomMotCompose, symbol);
 										learningGest.push_back(temp);
@@ -219,9 +219,9 @@ void ThreadHandTools::run() {
 											learning = true;
 											int nbmc;
 											string nmc;
-											Debugger::info("Veuilez entre la signification du geste :");
+											Debugger::info("Veuillez entrer la signification du geste :");
 											cin >> nmc;
-											Debugger::info("Veuilez entre le nombre de gestes à faire :");
+											Debugger::info("Veuillez entrer le nombre de gestes a faire :");
 											cin >> nbmc;
 
 											nbMotCompose = nbmc;
@@ -236,7 +236,7 @@ void ThreadHandTools::run() {
 										pair<string, long> temp("", symbol);
 										learningGest.push_back(temp);
 										cpt_Geasture++;
-										string msg = "------------------------PREPAREZ VOUS POUR VOTRE GESTE N°" + to_string(cpt_Geasture) + " DANS 5 SECONDES------------------------";
+										string msg = "------------------------PREPAREZ VOUS POUR VOTRE GESTE NUMERO " + to_string(cpt_Geasture) + " DANS 5 SECONDES------------------------";
 										Debugger::info(msg);
 										for (int i = 5; i > 0; i--) {
 											Debugger::info(to_string(i));
