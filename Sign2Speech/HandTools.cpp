@@ -213,13 +213,13 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 			if (calculateHammingDistance(avgTmp, handToInt(hand), 10, 2) >= 3) {
 				if (*nbReadFrame < (MAXFRAME / 3)) {
 					// remove all the previous gesture
-					Debugger::debug("Remove the previous gesture");
+					//Debugger::debug("Remove the previous gesture");
 					*nbReadFrame = 0;
 					*nbFrame = 0;
 				}
 				else if (*nbReadFrame > 2*(MAXFRAME / 3)) {
 					// we only keep the previous gesture
-					Debugger::debug("Only keep the previous gesture");
+					//Debugger::debug("Only keep the previous gesture");
 					writeAllowed = false;
 					(*nbFrame)++;
 				}

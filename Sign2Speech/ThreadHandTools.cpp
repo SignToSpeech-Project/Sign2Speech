@@ -156,9 +156,8 @@ void ThreadHandTools::run() {
 					mSymbolSent->lock();
 					*symbolSent = false;
 					mSymbolSent->unlock();
+					(ct.getSenseManager())->AcquireFrame(true);
 				}
-
-				(ct.getSenseManager())->AcquireFrame(true);
 
 				// Get current hand outputs
 				if (g_handDataOutput->Update() == PXC_STATUS_NO_ERROR)
