@@ -3,7 +3,7 @@
 
 Dictionary::Dictionary()
 {
-	root = new Node("0x1 :root", 0);
+	root = new Node("0x1 : root", 0);
 	currentNode = root;
 	currentNodeCreation = root;
 }
@@ -39,9 +39,9 @@ bool Dictionary::isPresent(long symbol) {
 
 //Update currentNode if it is posssible and return "0x0 : Not final word". Otherwhise, reset currentNode (currentNode = racine) and return the previous currentNode word value
 string Dictionary::read(long symbol) {
-	Node* n = currentNode->getChildren(symbol);
+	Node* n = currentNode->getChild(symbol);
 	if (n != NULL) {
-		if (n->hasChildrens()) {
+		if (n->hasChild()) {
 			currentNode = n;
 			return "0x0 : Not final word, signification temp : "+ n->getWord();
 		}
@@ -54,9 +54,9 @@ string Dictionary::read(long symbol) {
 	else {
 		string word = currentNode->getWord();
 		currentNode = root;
-		n = currentNode->getChildren(symbol); //To not lost the current symbol
+		n = currentNode->getChild(symbol); //To not lost the current symbol
 		if (n != NULL) {
-			if(n->hasChildrens()) currentNode = n;
+			if(n->hasChild()) currentNode = n;
 			else { //If the next symbol has a meaning and is a final word, instead of waiting next call to return the final word, it return "old word + new word"
 				string temp = n->getWord();
 				if (temp != "") word += " " + temp;
@@ -82,7 +82,7 @@ vector<vector<pair<string, long>>> Dictionary::createVectorDictionary() {
 
 	vector<pair<string, long>> v2;
 	vector<Node *>::iterator it;
-	vector<Node *> vtemp = root->getChildrens();
+	vector<Node *> vtemp = root->getChildren();
 	for (it = vtemp.begin(); it != vtemp.end(); ++it) {
 		vectorDictionary(&v, v2, (*it));
 	}
@@ -91,7 +91,7 @@ vector<vector<pair<string, long>>> Dictionary::createVectorDictionary() {
 
 //Private function used for createVectorDictionary(). Used for recursivity
 void Dictionary::vectorDictionary(vector<vector<pair<string, long>>>* v, vector<pair<string, long>> v2, Node* n) {
-	if (!(n->hasChildrens())) {
+	if (!(n->hasChild())) {
 		//ajouter à v2 les info du n actuel et les push back dans v
 		pair<string, long> p(n->getWord(), n->getSymbol());
 		v2.push_back(p);
@@ -100,7 +100,7 @@ void Dictionary::vectorDictionary(vector<vector<pair<string, long>>>* v, vector<
 	else {
 		pair<string, long> p(n->getWord(), n->getSymbol());
 		v2.push_back(p);
-		vector<Node *> vtemp = n->getChildrens();
+		vector<Node *> vtemp = n->getChildren();
 		for (vector<Node *>::iterator it = vtemp.begin(); it != vtemp.end(); ++it)
 		{
 			//ajouter les infos de n au vecteur v2 et appeller vectorDictionnary sur le fils de n
