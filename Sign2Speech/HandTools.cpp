@@ -2,16 +2,22 @@
 #include "HandTools.h"
 #include "ThreadHandTools.h"
 
+/** Calculate the time diffence between two times **/
 int diffMilliseconds(SYSTEMTIME t1, SYSTEMTIME t2) {
 	return ((t2.wMinute * 60000 + t2.wSecond * 1000 + t2.wMilliseconds) - (t1.wMinute * 60000 + t1.wSecond * 1000 + t1.wMilliseconds));
 }
 
+/** Print in binary an integer **/
 void HandTools::printBinary(uint32_t a, int nbBits) {
 	for (int b = nbBits; b >= 0; b--) {
 		printf("%d", (a >> b) & 0x1);
 	}
 }
 
+/** Calculate the Hamming distance between two numbers   **/
+/** on nBit with a different step						 **/
+/** If the step is 2, it will check if each set of 2bits **/
+/** are differents										 **/
 int HandTools::calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step) {
 	int dist = 0;
 	uint32_t one = 0x0;
@@ -24,36 +30,6 @@ int HandTools::calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int st
 		}
 	}
 	return dist;
-}
-
-boolean HandTools::isGesture(uint32_t gesture, uint32_t ref, int distMax, int maxApproximateFinger) {
-	// if it's pinky or thumb wich are struggling to recognize there state avoid returning false
-
-
-	// calculate the Hamming distance
-	int dist = 0;
-	int approximatefinger = 0;
-	for (int b = 0; b < 5; b++) {
-		uint8_t g = ((gesture >> (2 * b)) & 0b11);
-		uint8_t r = ((ref >> (2 * b)) & 0b11);
-		if (g != r) {
-			/*if ((g == 0b01 && r == 0b00) || (g == 0b01 && r == 0b10) || (r == 0b01 && g == 0b00) || (r == 0b01 && g == 0b10)) {
-			approximatefinger++;
-			}
-			else {*/
-			dist++;
-			/*}*/
-		}
-	}
-
-	if (dist < distMax /*&& approximatefinger < maxApproximateFinger*/) {
-		//std::printf("\t\t\t %s FIST %d \n", sideStr.c_str(), dist);
-		if (DEBUG) {
-			std::printf("[%ld] distance: %d\n", frameCounter, dist);
-		}
-		return true;
-	}
-	return false;
 }
 
 vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
@@ -116,6 +92,7 @@ vector<uint32_t> HandTools::removeOutValues(vector<uint32_t> v) {
 	return result;
 }
 
+/** Convert a hand to an encoded representation based on our encoding **/
 uint32_t handToInt(PXCHandData::IHand *hand) {
 	PXCHandData::FingerData fingerData;
 	uint32_t avg = 0x0;
@@ -142,8 +119,7 @@ uint32_t handToInt(PXCHandData::IHand *hand) {
 	return avg;
 }
 
-
-
+/** Calculate an average of a set of frames, on length **/
 uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[1000][5], int length) {
 	uint32_t avg = 0x0;
 
@@ -162,6 +138,7 @@ uint32_t HandTools::calculateAverage(PXCHandData::FingerData handData[1000][5], 
 		}
 		sumFold /= vResult.size();
 
+		// transform the foldedness into our encoding
 		if (sumFold < 50) {
 			if (sumFold < 25) {
 				avg |= (0b00 << (2 * f));
@@ -277,16 +254,6 @@ long HandTools::analyseGesture(PXCHandData::IHand *hand) {
 		return average;
 	}
 	return -1;
-}
-
-void HandTools::printFold(PXCHandData::IHand *hand) {
-	PXCHandData::FingerData fingerData;
-	for (int f = 0; f < 5; f++) {
-		if (hand->QueryFingerData((PXCHandData::FingerType)f, fingerData) == PXC_STATUS_NO_ERROR) {
-			//std::printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
-			//printf("     %s)\tFoldedness: %d, Radius: %f \n", Definitions::FingerToString((PXCHandData::FingerType)f).c_str(), fingerData.foldedness, fingerData.radius);
-		}
-	}
 }
 
 

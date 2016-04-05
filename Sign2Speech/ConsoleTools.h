@@ -1,5 +1,7 @@
 #pragma once
 #include <mutex>
+
+/** Keep all SDK variables **/
 class ConsoleTools
 {
 

@@ -70,19 +70,27 @@ public :
 		trajectories.clear();
 	}
 
+	// Get if the program is in learning mode or not
 	bool getLearning() { return learning; }
 
+	// Calculate the Hamming distance between two numbers
+	// Params: the number of bits on which the distance is done, whith a step of "step"
+	// Returns the hamming distance
 	int calculateHammingDistance(uint32_t a, uint32_t b, int nBit, int step);
 
-	boolean isGesture(uint32_t gesture, uint32_t ref, int distMax, int maxApproximateFinger);
 
 	vector<uint32_t> removeOutValues(vector<uint32_t> v);
 	
+	// Calculate the average of a set of frames, and convert it to our encoding
+	// Params: the set of frames handData, and the length of the array
+	// Returns the encoded average
 	uint32_t calculateAverage(PXCHandData::FingerData handData[1000][5], int length);
 
+	// Analyse a gesture:
+	//		add the new frame to the array of frames if it isn't full, otherwise calculate its encoded average for translation
+	// Params: a pointer to a new frame hand
+	// Returns -1 if it isn't an average, otherwise the encoded average
 	long analyseGesture(PXCHandData::IHand *hand);
-
-	void printFold(PXCHandData::IHand *hand);
 
 	/***********************************************/
 	/* *************** Trajectories ************** */

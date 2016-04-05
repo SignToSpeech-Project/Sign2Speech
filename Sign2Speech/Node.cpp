@@ -155,7 +155,6 @@ Node* Node::getChild(long s) {
 	int score = 1000;
 	int tempScore = 1000;
 	Node* tempNode = NULL;
-	int seuil = 5; 
 	for (vector<Node *>::iterator it = children.begin(); it != children.end(); ++it)
 	{
 		if (((*it)->symbol == s)) { //Optimisation because we already found the exact symbol

@@ -5,7 +5,7 @@
 using std::vector;
 using std::string;
 
-#define SEUIL 11
+#define SEUIL 8
 
 //Key : symbol. Value : word
 class Node
