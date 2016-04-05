@@ -43,21 +43,15 @@ vector< vector< pair<string, long> > > Parser::ReadJsonFile (){
     Writer<StringBuffer> writer(buffer);
     d.Accept(writer);
 
-    // print the output
-	//cout << buffer.GetString() << endl;
-
 	// count total number of words
 	for (Value::ConstMemberIterator itr = d.MemberBegin(); itr != d.MemberEnd(); ++itr){
 		nbWords++;
 	}
-	//cout << "Total number of words in the dictionary: " << nbWords << endl;
 
 	vector< vector< pair<string, long> > > allVectors(nbWords); // used to store all the vectors (one vector of pairs for each word)
 	
 	for(Value::ConstMemberIterator itr = d.MemberBegin(); itr != d.MemberEnd(); ++itr){
-		//cout << itr->name.GetString() << endl;
-
-		// get saucisson / maison
+		// get current word
 		const Value& curWord = d[itr->name.GetString()];
 
 		// create an array of pairs for the current word
@@ -72,23 +66,17 @@ vector< vector< pair<string, long> > > Parser::ReadJsonFile (){
 				// if the value is "word"
 				if(strcmp(itr1->name.GetString(), "word") == 0){
 					word = c[itr1->name.GetString()].GetString();
-					//cout << "\t\t\t" << itr1->name.GetString() << " " << word << endl;
-
 				}
 				// else : the value is  "gesture"
 				else if (strcmp(itr1->name.GetString(), "gesture") == 0){
 					sGesture = c[itr1->name.GetString()].GetString();
 					gesture = strtol(sGesture.c_str(), nullptr, 0);
-					//cout << "\t\t\t" << itr1->name.GetString() << " " << gesture << endl;
 				}
 			}
 			// create the pair
-			//pairs[j] = pair<string, long>(word, gesture);
 			pair<string, long> tmp = pair<string, long>(word, gesture);
 			vect.push_back(tmp);
-			//cout << "\t\t\t > Current pair: " << tmp.first << ", " << tmp.second << endl;
 		}
-		//cout << "curWord size : " << curWord.Size() << endl;
 
 		// add the current vector to AllVectors
 		allVectors.push_back(vect);

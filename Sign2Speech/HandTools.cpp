@@ -290,7 +290,10 @@ void HandTools::printFold(PXCHandData::IHand *hand) {
 }
 
 
-/* Analyse the movement of the gesture (straight, circular or elliptic) from all the points that compose the gesture */
+/***********************************************/
+/* *************** Trajectories ************** */
+/***********************************************/
+
 uint8_t HandTools::analyseMovement(int nbFrame) {
 
 	// coordinates of the first point of the movement
@@ -342,29 +345,23 @@ bool HandTools::isStatic(uint8_t *out, int nbFrame) {
 	}
 }
 
-// horizontal movement detected
 bool HandTools::isHorizontal(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
 	if ((abs(p0.x - pf.x) > VALID_HOR) && (abs(p0.y - pf.y) <= ERR_VERT)) {
 		cout << "STRAIGHT HORIZONTAL" << endl;
-		//printf("STRAIGHT HORIZONTAL\n");
 		return true;
 	}
 	return false;
 }
 
-// vertical movement detected
 bool HandTools::isVertical(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf) {
 	if ((abs(p0.y - pf.y) > VALID_VER) && (abs(p0.x - pf.x) <= ERR_HOR)) {
 		cout << "STRAIGHT VERTICAL" << endl;
-		//printf("STRAIGHT VERTICAL\n");
 		return true;
 	}
 	return false;
 }
 
-// straight (line) movement detected
 bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf, uint8_t *out) {
-
 	// y = ax + b ; a is the slope, b is the intercept
 	float a, b;
 	if ((pf.x - p0.x) == 0) {
@@ -379,20 +376,16 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 	if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT_HOR && isHorizontal(p0, pm, pf)) {
 		// which direction: left or right?
 		if (p0.x - pf.x > 0) {
-			//cout << "    RIGHT" << endl;
 			printf("\tRIGHT\n");
 			*out |= 0b1;
 			printBinary(*out, 7);
-			//std::printf("\n");
 			printf("\n");
 			return true;
 		}
 		else {
-			//cout << "    LEFT" << endl;
 			printf("\tLEFT\n");
 			*out |= (0b1 << 1);
 			printBinary(*out, 7);
-			//std::printf("\n");
 			printf("\n");
 			return true;
 		}
@@ -400,20 +393,16 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 	else if (abs(pm.y - (a*pm.x + b)) < ERR_STRAIGHT_VER && isVertical(p0, pm, pf)) {
 		// which direction: top or bottom?
 		if (p0.y - pf.y > 0) {
-			//cout << "    BOTTOM" << endl;
 			printf("\tBOTTOM\n");
 			*out |= (0b1 << 3);
 			printBinary(*out, 7);
-			//std::printf("\n");
 			printf("\n");
 			return true;
 		}
 		else {
-			//cout << "    TOP" << endl;
 			printf("\tTOP\n");
 			*out |= (0b1 << 2);
 			printBinary(*out, 7);
-			//std::printf("\n");
 			printf("\n");
 			return true;
 		}
@@ -424,20 +413,16 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		if (p0.y < pf.y) {
 			*out |= (0b1 << 2);
 			if (p0.x - pf.x > 0) {
-				//cout << "\t\tNORMAL TOP RIGHT" << endl;
 				printf("\tNORMAL TOP RIGHT\n");
 				*out |= 0b1;
 				printBinary(*out, 7);
-				//std::printf("\n");
 				printf("\n");
 				return true;
 			}
 			else {
-				//cout << "\t\tNORMAL TOP LEFT" << endl;
 				printf("\tNORMAL TOP LEFT\n");
 				*out |= (0b1 << 1);
 				printBinary(*out, 7);
-				//std::printf("\n");
 				printf("\n");
 				return true;
 			}
@@ -446,20 +431,16 @@ bool HandTools::isStraight(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		else if (p0.y > pf.y) {
 			*out |= (0b1 << 3);
 			if (p0.x - pf.x > 0) {
-				//cout << "\t\tNORMAL BOTTOM RIGHT" << endl;
 				printf("\tNORMAL BOTTOM RIGHT\n");
 				*out |= 0b1;
 				printBinary(*out, 7);
-				//std::printf("\n");
 				printf("\n");
 				return true;
 			}
 			else {
-				//cout << "\t\tNORMAL BOTTOM LEFT" << endl;
 				printf("\tNORMAL BOTTOM LEFT\n");
 				*out |= (0b1 << 1);
 				printBinary(*out, 7);
-				//std::printf("\n");
 				printf("\n");
 				return true;
 			}
@@ -487,7 +468,6 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		// chose 1 point, different from p0, pm and pf, to see if it respects the ellipse eq
 		PXCPoint3DF32 p1 = massCenterCoordinates[(int)(nbFrame / 3)];
 		if ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) <= ERR_ELLIPSE) {
-			//cout << "NOT FULL ELLIPSE" << endl;
 			printf("NOT FULL ELLIPSE\n");
 			*out |= (0b1 << 7);
 			return true;
@@ -517,7 +497,6 @@ bool HandTools::isElliptic(PXCPoint3DF32 p0, PXCPoint3DF32 pm, PXCPoint3DF32 pf,
 		PXCPoint3DF32 p2 = massCenterCoordinates[(int)(2*nbFrame / 3)];
 		if ( ((abs(pow(p1.x - pc.x, 2) / (a*a) + pow(p1.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE)
 		&& ((abs(pow(p2.x - pc.x, 2) / (a*a) + pow(p2.y - pc.y, 2) / (b*b)) - 1) < ERR_ELLIPSE) ) {
-			//cout << "FULL ELLIPSE" << endl;
 			printf("FULL ELLIPSE\n");
 			*out |= (0b1 << 6);
 			return true;
@@ -561,21 +540,18 @@ long HandTools::analyseXGestures(PXCHandData::IHand* hand) {
 		nbMassCenter = 0;
 
 		if (nbGesture < 3) {
-			/*std::stringstream out;
-			out << ;
-			Debugger::info(out.str());*/
-			Debugger::info("-------------------------------Repeter le meme geste dans 5 secondes-------------------------------");
+			Debugger::info("----> Repeat the same gesture in 5 seconds... <----");
 			for (int i = 5; i > 0; i--) {
 				Debugger::info(to_string(i));
 				Sleep(1000);
 			}
-			Debugger::info("-------------------------------Repeter le meme geste MAINTENANT-------------------------------");
+			Debugger::info("----> NOW <----");
 		}
 
 		else {
-			Debugger::info("------------------------------PATIENTEZ SVP--------------------------------");
+			Debugger::info("----> Please wait... <----");
 
-			//moyenne des 3 gestes du vecteur contenant les 3 gestes
+			// average of the vector composed of the 3 repeated gestures
 			avg = calculateAverage(handData, nbFrame);
 			trajectory = averageTrajectory(trajectories);
 			readSymbol = avg | (trajectory << 10);
