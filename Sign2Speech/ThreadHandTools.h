@@ -18,12 +18,7 @@ private :
 
 	bool g_stop = false; // user closes application
 
-	bool learning = false; // learning mode or not
-	string nomMotCompose;
-	int nbMotCompose;
-	long lastSymbolRead = -1;
-
-	vector<pair<string, long>> learningGest;
+	vector<pair<string, long>> learningGesture;
 
 	char *address;
 	char *room;
@@ -35,5 +30,6 @@ public:
 
 	void static handle_message(const std::string & message);
 
+	//Start the thread
 	void run();	
 };

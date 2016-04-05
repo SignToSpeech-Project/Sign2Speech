@@ -3,9 +3,9 @@
 
 Dictionary::Dictionary()
 {
-	racine = new Node("0x1 : racine", 0);
-	currentNode = racine;
-	currentNodeCreation = racine;
+	root = new Node("0x1 :root", 0);
+	currentNode = root;
+	currentNodeCreation = root;
 }
 
 //Return the word of the currentNode
@@ -24,7 +24,7 @@ void Dictionary::insertList(vector<pair<string, long>> v) {
 	{
 		currentNodeCreation = insert((*it).first, (*it).second);
 	}
-	currentNodeCreation = racine;
+	currentNodeCreation = root;
 }
 
 //Remove if it is possible the children of the currentNode with the symbol symbol. Return true if the remove was successful, otherwhise false
@@ -47,20 +47,20 @@ string Dictionary::read(long symbol) {
 		}
 		else { //If the current word is a final word
 			string word = n->getWord();
-			currentNode = racine;
+			currentNode =root;
 			return word;
 		}
 	}
 	else {
 		string word = currentNode->getWord();
-		currentNode = racine;
+		currentNode = root;
 		n = currentNode->getChildren(symbol); //To not lost the current symbol
 		if (n != NULL) {
 			if(n->hasChildrens()) currentNode = n;
 			else { //If the next symbol has a meaning and is a final word, instead of waiting next call to return the final word, it return "old word + new word"
 				string temp = n->getWord();
 				if (temp != "") word += " " + temp;
-				currentNode = racine;
+				currentNode = root;
 			}
 		}
 		return word;
@@ -71,7 +71,7 @@ string Dictionary::read(long symbol) {
 //Put the currentNode on the racine and return previous currentNode word value.
 string Dictionary::refreshDictionary() {
 	string word = currentNode->getWord();
-	currentNode = racine;
+	currentNode = root;
 	return word;
 }
 
@@ -82,7 +82,7 @@ vector<vector<pair<string, long>>> Dictionary::createVectorDictionary() {
 
 	vector<pair<string, long>> v2;
 	vector<Node *>::iterator it;
-	vector<Node *> vtemp = racine->getChildrens();
+	vector<Node *> vtemp = root->getChildrens();
 	for (it = vtemp.begin(); it != vtemp.end(); ++it) {
 		vectorDictionary(&v, v2, (*it));
 	}

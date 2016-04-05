@@ -12,7 +12,7 @@ class Dictionary
 
 private:
 
-	Node * racine;
+	Node * root;
 	Node * currentNode;
 	Node* currentNodeCreation;
 

@@ -13,6 +13,7 @@ void ThreadHandTools::handle_message(const std::string & message) {
 	Debugger::debug(out.str());
 }
 
+//Start the thread
 void ThreadHandTools::run() {
 	
 	ConsoleTools ct;
@@ -31,11 +32,9 @@ void ThreadHandTools::run() {
 	webSocketAddress << "ws://" << address << "/ws/subtitle/" << room;
 	
 	ThreadHandTools::webSock = WebSocket::from_url(webSocketAddress.str());
-	//ThreadHandTools::webSock = WebSocket::from_url("ws://52.35.210.217/ws/subtitle/test");
 
 	if (ThreadHandTools::webSock != NULL) {
 		Debugger::info("Connected to the WebSocket server " + webSocketAddress.str());
-		//assert(ThreadHandTools::webSock); //TODO : enlever le commentaire
 
 		HandTools h;
 
@@ -106,40 +105,46 @@ void ThreadHandTools::run() {
 		{
 			Debugger::info("\nPXCSenseManager Initializing OK\n========================\n");
 
-			int currentGesture = 0;
 			int firstFrame = 0;
-			int currentGestComposee = 0;
-			// 3) le vecteur de taille fournie par l'utilisateur (nbGestes) qui contient les différents gestes intermediaires
-			//		et qui recomposent le geste final
-			vector<long> completeGesture;
+
+
+
 
 			time_t start;
-			int cpt_Geasture = 1;
+			long lastSymbolRead = -1; //Used to know what was the last gesture the user did
 
-			Debugger::info("Voulez vous ajouter des mots au dictionnaire ? o/n");
+
+
+			bool learning = false; //learning mode or not
+			int cpt_Gesture = 1; //Used on learning mode to know which gesture we are doing at this time
+			string nameCompoundWord; //Used on learning mode to know the name of the word the user wants to add			
+			int nbCompoundWord; //Used on learning mode to know how many gestures need to be done to complete the user word
+			vector<long> completeGesture; //Used on learning mode : Vector of the serie of gestures the user did
+
+			Debugger::info("Do you want to add words to the Dictionary ? y/n");
 			string answer;
 			cin >> answer;
-			if ((answer == "o") || (answer == "O")) {
+			if ((answer == "y") || (answer == "Y")) {
 
 				learning = true;
 				int nbmc;
 				string nmc;
-				Debugger::info("Veuillez entrer la signification du geste :");
+				Debugger::info("What is the meaning of your word ?");
 				cin >> nmc;
-				Debugger::info("Veuillez entrer le nombre de gestes a faire :");
+				Debugger::info("How many gestures are required for this word ?");
 				cin >> nbmc;
 
-				nbMotCompose = nbmc;
-				nomMotCompose = nmc;
+				nbCompoundWord = nbmc;
+				nameCompoundWord = nmc;
 
 				h.learningMode(nbmc);
 
-				Debugger::info("Le learning commence dans 5 secondes, preparez-vous : ");
+				Debugger::info("Learning mode is starting in 5 secondes, be ready !");
 				for (int i = 5; i > 0; i--) {
 					Debugger::info(to_string(i));
 					Sleep(1000);
 				}
-				Debugger::info("----------------------VEUILLEZ FAIRE VOTRE PREMIER GESTE DURANT 3 SECONDES----------------------");
+				Debugger::info("------------------------PLEASE, DO YOUR FIRST GESTURE IN 3 SECONDES------------------------");
 
 			}
 
@@ -163,10 +168,8 @@ void ThreadHandTools::run() {
 						g_handDataOutput->QueryHandData(PXCHandData::ACCESS_ORDER_BY_TIME, i, hand);
 						std::string handSide = "Unknown Hand";
 						handSide = hand->QueryBodySide() == PXCHandData::BODY_SIDE_LEFT ? "Left Hand" : "Right Hand";
-						//std::printf("%s\n==============\n", handSide.c_str());
-						//printFold(hand);
 
-						// normal recognition mode
+						//RECOGNITION MODE-------------------------------------------------------------------------------
 						if (learning == false) {
 							long symbol = h.analyseGesture(hand);
 							if ((symbol != -1) && (symbol != lastSymbolRead)) {
@@ -176,57 +179,57 @@ void ThreadHandTools::run() {
 								lastSymbolRead = symbol;  //Allow the user to keep for example his "fist" gesture during some seconds without changing the dictionary reading level
 							}
 						}
-						// learning mode
+
+						//LEARNING MODE---------------------------------------------------------------------------------
 						else if (learning == true) {
 							long symbol = h.analyseXGestures(hand);
 							if (symbol != -1) {
 								if (!h.getLearning()) {
 									learning = false;
-									pair<string, long> temp(nomMotCompose, symbol);
-									learningGest.push_back(temp);
+									pair<string, long> temp(nameCompoundWord, symbol);
+									learningGesture.push_back(temp);
 									mBufferW->lock();
-									bufferWrite->push_back(learningGest);
+									bufferWrite->push_back(learningGesture);
 									mBufferW->unlock();
-									learningGest.clear();
+									learningGesture.clear();
 
-									Debugger::info("------------------------MOT ENREGISTRE------------------------");
+									Debugger::info("------------------------WORD SAVED------------------------");
 									Sleep(2000);
-									Debugger::info("Voulez vous entrer un nouveau mot ? o/n");
+									Debugger::info("Do you want to add a new word to the Dictionary ? y/n");
 									string answer;
 									cin >> answer;
-									if ((answer == "o") || (answer == "O")) {
+									if ((answer == "y") || (answer == "Y")) {
 
 										learning = true;
 										int nbmc;
 										string nmc;
-										Debugger::info("Veuillez entrer la signification du geste :");
+										Debugger::info("What is the meaning of your word ?");
 										cin >> nmc;
-										Debugger::info("Veuillez entrer le nombre de gestes a faire :");
+										Debugger::info("How many gestures are required for this word ?");
 										cin >> nbmc;
 
-										nbMotCompose = nbmc;
-										nomMotCompose = nmc;
+										nbCompoundWord = nbmc;
+										nameCompoundWord = nmc;
 
 										h.learningMode(nbmc);
 
 									}
-									else Debugger::info("------------------------PASSAGE EN MODE RECONNAISSANCE DE GESTES------------------------");
+									else Debugger::info("------------------------SWITCHING ON RECOGNITION MODE------------------------");
 								}
 								else {
 									pair<string, long> temp("", symbol);
-									learningGest.push_back(temp);
-									cpt_Geasture++;
-									string msg = "------------------------PREPAREZ VOUS POUR VOTRE GESTE NUMERO " + to_string(cpt_Geasture) + " DANS 5 SECONDES------------------------";
+									learningGesture.push_back(temp);
+									cpt_Gesture++;
+									string msg = "------------------------BE READY FOR THE GESTURE NUMERO " + to_string(cpt_Gesture) + " IN 5 SECONDES------------------------";
 									Debugger::info(msg);
 									for (int i = 5; i > 0; i--) {
 										Debugger::info(to_string(i));
 										Sleep(1000);
 									}
-									Debugger::info("-------------------------------Faites votre geste MAINTENANT pendant 3 secondes-------------------------------");
+									Debugger::info("------------------------Do your gesture NOW during 3 secondes------------------------");
 								}
 							}
 
-							//learning = false;
 						}
 					}
 
