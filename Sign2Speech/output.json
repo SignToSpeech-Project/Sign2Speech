@@ -1,10 +1,4 @@
 {
-	"oiseau": [
-		{
-			"word": "oiseau",
-			"gesture": "0x00000006"
-		}
-	],
 	"lundi": [
 		{
 			"word": "lundi",
@@ -23,14 +17,10 @@
 			"gesture": "0x00000155"
 		}
 	],
-	"JeudiVendredi": [
+	"jeudi": [
 		{
 			"word": "jeudi",
 			"gesture": "0x00000303"
-		},
-		{
-			"word": "JeudiVendredi",
-			"gesture": "0x0000003c"
 		}
 	],
 	"vendredi": [
@@ -53,18 +43,28 @@
 			"gesture": "0x000003ff"
 		}
 	],
-	"Test3GestesStatiques": [
+	"dimanche": [
 		{
-			"word": "",
-			"gesture": "0x000003ff"
-		},
+			"word": "dimanche",
+			"gesture": "0x0002000c"
+		}
+	],
+	"i": [
 		{
-			"word": "",
-			"gesture": "0x0000000c"
-		},
+			"word": "i",
+			"gesture": "0x00000300"
+		}
+	],
+	"c": [
 		{
-			"word": "Test3GestesStatiques",
-			"gesture": "0x00000002"
+			"word": "c",
+			"gesture": "0x000002ab"
+		}
+	],
+	"m": [
+		{
+			"word": "m",
+			"gesture": "0x000003fc"
 		}
 	]
 }
