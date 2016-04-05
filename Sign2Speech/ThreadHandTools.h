@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "easywsclient.hpp"
 
-
 using easywsclient::WebSocket;
 
 class ThreadHandTools : public ThreadApp {
@@ -15,8 +14,6 @@ private :
 	PXCHandModule *g_handModule;
 	PXCHandData *g_handDataOutput;
 	PXCHandConfiguration *g_handConfiguration;
-
-	bool g_stop = false; // user closes application
 
 	vector<pair<string, long>> learningGesture;
 

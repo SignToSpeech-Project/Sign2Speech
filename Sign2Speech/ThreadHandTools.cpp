@@ -7,6 +7,7 @@ ThreadHandTools::ThreadHandTools(mutex *mBR, mutex *mBW, mutex *mSS, bool* pg, v
 	room = r;
 }
 
+/** Display incoming message from the subtitling channel **/
 void ThreadHandTools::handle_message(const std::string & message) {
 	std::stringstream out;
 	out << ">>> " << message;
@@ -18,6 +19,7 @@ void ThreadHandTools::run() {
 	
 	ConsoleTools ct;
 
+	// open a WebSocket channel with the negotiation server
 #ifdef _WIN32
 	INT rc;
 	WSADATA wsaData;
@@ -33,12 +35,14 @@ void ThreadHandTools::run() {
 	
 	ThreadHandTools::webSock = WebSocket::from_url(webSocketAddress.str());
 
+	// if the connection has been done correctly
+	// try to start RealSense SDK
 	if (ThreadHandTools::webSock != NULL) {
 		Debugger::info("Connected to the WebSocket server " + webSocketAddress.str());
 
 		HandTools h;
 
-		// Setup
+		/** SDK initialisation **/
 		ct.setSession(PXCSession::CreateInstance());
 		if (!(ct.getSession()))
 		{
@@ -97,6 +101,7 @@ void ThreadHandTools::run() {
 			g_handConfiguration->Release();
 			g_handConfiguration = NULL;
 		}
+		/** End of initialisation **/
 
 		pxcI32 numOfHands = 0;
 
@@ -107,13 +112,8 @@ void ThreadHandTools::run() {
 
 			int firstFrame = 0;
 
-
-
-
 			time_t start;
 			long lastSymbolRead = -1; //Used to know what was the last gesture the user did
-
-
 
 			bool learning = false; //learning mode or not
 			int cpt_Gesture = 1; //Used on learning mode to know which gesture we are doing at this time
@@ -237,7 +237,6 @@ void ThreadHandTools::run() {
 				(ct.getSenseManager())->ReleaseFrame();
 			} // end while acquire frame
 		} // end if Init
-
 		else
 		{
 			ct.releaseAll();
