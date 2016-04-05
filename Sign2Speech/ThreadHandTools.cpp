@@ -144,7 +144,7 @@ void ThreadHandTools::run() {
 					Debugger::info(to_string(i));
 					Sleep(1000);
 				}
-				Debugger::info("------------------------PLEASE, DO YOUR FIRST GESTURE IN 3 SECONDES------------------------");
+				Debugger::info("----> Hold for 3 secs <----");
 
 			}
 
