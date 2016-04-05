@@ -75,7 +75,7 @@ int Node::scoreGeasture(long s1, long s2) {
 		}
 
 	}
-
+	
 	int trajectorie1 = (s1 >> 11) & 0b11111111; //Trajectorie of s1
 	int trajectorie2 = (s2 >> 11) & 0b11111111; //Trajectorie of s2
 
